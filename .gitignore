@@ -1,6 +1,9 @@
 # macOS
 .DS_Store
 
+#GeoJSON file
+src/data/Counties_and_Unitary_Authorities_December_2024_Boundaries_UK_BFE_-1559183835153833632.json
+
 # Node.js / React / Next.js
 node_modules/
 npm-debug.log*

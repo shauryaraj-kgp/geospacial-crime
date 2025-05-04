@@ -47,41 +47,43 @@
     bottom: 20px;
     left: 20px;
     z-index: 1000;
-    width: 300px;
+    width: 320px;
     text-align: center;
     font-size: 12px;
-    font-weight: bold;
-    background-color: rgba(255, 255, 255, 0.85);
-    padding: 8px;
-    border-radius: 6px;
+    background-color: rgba(255, 255, 255, 0.9);
+    padding: 10px;
+    border-radius: 8px;
     box-shadow: 0 0 6px rgba(0, 0, 0, 0.2);
 }
 
 .gradient-bar {
-    height: 10px;
+    height: 12px;
     width: 100%;
     background: linear-gradient(to right,
             hsl(120, 100%, 50%) 0%,
             /* 1 */
-            hsl(90, 100%, 50%) 25%,
+            hsl(100, 100%, 50%) 20%,
             /* 10 */
-            hsl(60, 100%, 50%) 50%,
+            hsl(60, 100%, 50%) 40%,
             /* 50 */
-            hsl(30, 100%, 50%) 75%,
+            hsl(30, 100%, 50%) 60%,
             /* 100 */
+            hsl(10, 100%, 50%) 80%,
+            /* 250 */
             hsl(0, 100%, 50%) 100%
             /* 800 */
         );
-    margin-bottom: 5px;
+    margin-bottom: 6px;
     border-radius: 4px;
 }
-
 
 .legend-labels {
     display: flex;
     justify-content: space-between;
     font-weight: normal;
+    color: #333;
 }
+
 
 
 .time-selector {
