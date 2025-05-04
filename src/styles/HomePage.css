@@ -59,20 +59,6 @@
 .gradient-bar {
     height: 12px;
     width: 100%;
-    background: linear-gradient(to right,
-            hsl(120, 100%, 50%) 0%,
-            /* 1 */
-            hsl(100, 100%, 50%) 20%,
-            /* 10 */
-            hsl(60, 100%, 50%) 40%,
-            /* 50 */
-            hsl(30, 100%, 50%) 60%,
-            /* 100 */
-            hsl(10, 100%, 50%) 80%,
-            /* 250 */
-            hsl(0, 100%, 50%) 100%
-            /* 800 */
-        );
     margin-bottom: 6px;
     border-radius: 4px;
 }
@@ -83,6 +69,34 @@
     font-weight: normal;
     color: #333;
 }
+
+.gradient-bar.crime {
+    background: linear-gradient(to right,
+            hsl(120, 100%, 50%) 0%,
+            hsl(100, 100%, 50%) 20%,
+            hsl(60, 100%, 50%) 40%,
+            hsl(30, 100%, 50%) 60%,
+            hsl(10, 100%, 50%) 80%,
+            hsl(0, 100%, 50%) 100%);
+}
+
+.gradient-bar.sentiment {
+    background: linear-gradient(to right,
+            hsl(120, 100%, 50%) 0%,
+            hsl(60, 100%, 50%) 50%,
+            hsl(0, 100%, 50%) 100%);
+}
+
+.legend-labels.sentiment span {
+    flex: 1;
+    text-align: center;
+}
+
+.legend-labels.crime span {
+    flex: 1;
+    text-align: center;
+}
+
 
 
 
