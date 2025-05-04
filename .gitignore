@@ -16,27 +16,6 @@ dist/
 coverage/
 .vscode/
 
-# Python / Flask
-__pycache__/
-*.py[cod]
-*.pyo
-*.pyd
-*.pyc
-*.pkl
-*.egg-info/
-*.sqlite3
-*.log
-.env
-.venv/
-venv/
-instance/
-*.db
-
-# MongoDB dump
-dump/
-*.bson
-*.json
-
 # OS / Editor junk
 Thumbs.db
 ehthumbs.db
@@ -48,6 +27,3 @@ ehthumbs.db
 *.bak
 *.tmp
 *.sw?
-
-# Optional: VSCode settings (if personal only)
-.vscode/settings.json
