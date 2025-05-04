@@ -34,20 +34,34 @@ function HomePage() {
     const getColor = (score) => {
         if (score == null || score <= 0) return '#ccc';
 
-        // Emphasize mid-range (50–100), but still cover 1–800
-        const min = 1;
-        const max = 800;
+        // Focus on 50–250, but still handle 1–800
+        const focusMin = 50;
+        const focusMax = 250;
+        const globalMin = 1;
+        const globalMax = 800;
 
-        const logMin = Math.log10(min);
-        const logMax = Math.log10(max);
+        // Log scale transformation for the global range (1-800)
+        const logGlobalMin = Math.log10(globalMin);
+        const logGlobalMax = Math.log10(globalMax);
         const logScore = Math.log10(score);
 
-        const percent = (logScore - logMin) / (logMax - logMin);
-        const clamped = Math.min(1, Math.max(0, percent));
+        // Normalize the log score to the range [0, 1] for the full 1-800 range
+        let percent = (logScore - logGlobalMin) / (logGlobalMax - logGlobalMin);
+        percent = Math.min(1, Math.max(0, percent)); // Clamp to [0,1]
 
-        const hue = (1 - clamped) * 120; // green to red
+        // Now, we stretch the [50, 250] range more heavily within the gradient
+        const focusPercent = (logScore - Math.log10(focusMin)) / (Math.log10(focusMax) - Math.log10(focusMin));
+        const adjustedPercent = Math.min(1, Math.max(0, focusPercent)); // Clamp to [0,1]
+
+        // Combine the two percent calculations, giving more importance to the 50-250 range
+        const finalPercent = 0.2 + 0.6 * adjustedPercent + 0.2 * percent;
+
+        // Calculate the hue based on the final percent (green to red)
+        const hue = (1 - finalPercent) * 120; // green (120) to red (0)
         return `hsl(${hue}, 100%, 50%)`;
     };
+
+
 
 
     // Step 4: Leaflet region style
@@ -73,9 +87,11 @@ function HomePage() {
                     <span>10</span>
                     <span>50</span>
                     <span>100</span>
+                    <span>250</span>
                     <span>800</span>
                 </div>
             </div>
+
 
 
             <div className="time-selector-container">
