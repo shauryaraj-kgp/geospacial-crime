@@ -31,17 +31,24 @@ function HomePage() {
         return regionalScoreMap[regionName] ?? null;
     };
 
-    // Step 3: Generate color from 0 (green) to 780 (red)
     const getColor = (score) => {
-        if (score == null) return '#ccc'; // fallback
+        if (score == null || score <= 0) return '#ccc';
 
-        const min = 0;
-        const max = 780;
-        const percent = Math.min(1, Math.max(0, (score - min) / (max - min))); // normalize
+        // Emphasize mid-range (50–100), but still cover 1–800
+        const min = 1;
+        const max = 800;
 
-        const hue = (1 - percent) * 120; // green (120°) to red (0°)
+        const logMin = Math.log10(min);
+        const logMax = Math.log10(max);
+        const logScore = Math.log10(score);
+
+        const percent = (logScore - logMin) / (logMax - logMin);
+        const clamped = Math.min(1, Math.max(0, percent));
+
+        const hue = (1 - clamped) * 120; // green to red
         return `hsl(${hue}, 100%, 50%)`;
     };
+
 
     // Step 4: Leaflet region style
     const regionStyle = (feature) => {
@@ -59,17 +66,20 @@ function HomePage() {
 
     return (
         <div className="Map">
-            <div className="legend" style={{ zIndex: 1000 }}>
+            <div className="legend">
                 <div className="gradient-bar"></div>
                 <div className="legend-labels">
-                    <span>0</span>
-                    <span>400</span>
+                    <span>1</span>
+                    <span>10</span>
+                    <span>50</span>
+                    <span>100</span>
                     <span>800</span>
                 </div>
             </div>
 
-            <div className="time-selector" style={{ zIndex: 1000 }}>
-                <div className="dropdowns">
+
+            <div className="time-selector-container">
+                <div className="time-selector-card">
                     <select value={selectedYear} onChange={(e) => setSelectedYear(Number(e.target.value))}>
                         {[2019, 2020, 2021, 2022, 2023, 2024].map(year => (
                             <option key={year} value={year}>{year}</option>
@@ -83,8 +93,9 @@ function HomePage() {
                 </div>
             </div>
 
+
             <MapContainer
-                center={[56.4907, -4.2026]}
+                center={[57.4907, -4.2026]}
                 zoom={6}
                 style={{ height: "100vh", width: "100%" }}
                 minZoom={3}
