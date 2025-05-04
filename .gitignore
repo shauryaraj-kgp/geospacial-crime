@@ -1,2 +1,53 @@
-node_modules
-src/data/Counties_and_Unitary_Authorities_December_2024_Boundaries_UK_BFE_-1559183835153833632.json
+# macOS
+.DS_Store
+
+# Node.js / React / Next.js
+node_modules/
+npm-debug.log*
+yarn-debug.log*
+yarn-error.log*
+.pnpm-debug.log*
+.env
+.env.local
+.env.*.local
+.next/
+out/
+dist/
+coverage/
+.vscode/
+
+# Python / Flask
+__pycache__/
+*.py[cod]
+*.pyo
+*.pyd
+*.pyc
+*.pkl
+*.egg-info/
+*.sqlite3
+*.log
+.env
+.venv/
+venv/
+instance/
+*.db
+
+# MongoDB dump
+dump/
+*.bson
+*.json
+
+# OS / Editor junk
+Thumbs.db
+ehthumbs.db
+.idea/
+*.swp
+*~
+
+# Git LFS and backups
+*.bak
+*.tmp
+*.sw?
+
+# Optional: VSCode settings (if personal only)
+.vscode/settings.json
