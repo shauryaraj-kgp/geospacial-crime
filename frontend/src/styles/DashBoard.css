@@ -1,8 +1,16 @@
+/* DashBoard.css */
+
+.dashboard-wrapper {
+    background-image: url('../assets/topographic-line-contour-map-background-geographic-grid-map-vector.jpg');
+}
+
 .dashboard {
     padding: 20px;
     font-family: 'Segoe UI', sans-serif;
-    background-color: #f8f9fa;
+    background-color: rgba(44, 102, 45, 0.85);
+    /* Light green background */
     color: #333;
+    min-height: 95vh;
 }
 
 .dashboard-header {
@@ -11,15 +19,19 @@
 }
 
 .dashboard-header h1 {
-    font-size: 2rem;
-    color: #222;
+    font-size: 3rem;
+    color: #eaffea;
+    /* Dark green */
+    margin-bottom: 10px;
 }
 
 .dashboard-header p {
-    max-width: 800px;
-    margin: 0 auto;
-    font-size: 1rem;
-    color: #555;
+    margin: 20px 50px;
+    margin-bottom: 50px;
+    font-size: 1.2rem;
+    color: #eaffea;
+    /* Olive green */
+    line-height: 1.6;
 }
 
 .dashboard-main {
@@ -32,28 +44,53 @@
 .chart-panel,
 .map-panel {
     flex: 1 1 45%;
-    background-color: white;
+    background-color: #ffffff;
     padding: 20px;
     border-radius: 12px;
-    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.08);
+    box-shadow: 0 6px 16px rgba(44, 102, 45, 0.1);
+    /* Soft green shadow */
+    transition: transform 0.2s ease;
+}
+
+.chart-panel:hover,
+.map-panel:hover {
+    transform: translateY(-4px);
 }
 
 .chart-header {
     display: flex;
     align-items: center;
+    justify-content: center;
     gap: 10px;
     margin-bottom: 15px;
 }
 
+.chart-header label {
+    font-weight: bold;
+    font-size: 1rem;
+    color: #2c662d;
+}
+
 select {
-    padding: 6px 10px;
-    font-size: 14px;
-    border-radius: 6px;
-    border: 1px solid #ccc;
+    padding: 8px 12px;
+    font-size: 16px;
+    border-radius: 8px;
+    border: 1px solid #92c36b;
+    background-color: #f6fff2;
+    color: #2c662d;
+    outline: none;
+    transition: border 0.3s ease;
+}
+
+select:hover,
+select:focus {
+    border-color: #4b9444;
 }
 
 .map-preview {
     position: relative;
+    overflow: hidden;
+    border-radius: 12px;
 }
 
 .map-overlay {
@@ -65,16 +102,29 @@ select {
     display: flex;
     align-items: center;
     justify-content: center;
-    color: white;
-    background: rgba(0, 0, 0, 0.3);
+    color: #fff;
+    background: rgba(44, 102, 45, 0.75);
     font-weight: bold;
-    font-size: 1.2em;
+    font-size: 1.4em;
     opacity: 0;
     transition: opacity 0.3s ease;
-    border-radius: 8px;
+    border-radius: 12px;
     pointer-events: none;
+    text-shadow: 1px 1px 2px rgba(0, 0, 0, 0.4);
 }
 
 .map-preview:hover .map-overlay {
     opacity: 1;
+}
+
+/* Responsive tweaks */
+@media (max-width: 900px) {
+    .dashboard-main {
+        flex-direction: column;
+    }
+
+    .chart-panel,
+    .map-panel {
+        flex: 1 1 100%;
+    }
 }
