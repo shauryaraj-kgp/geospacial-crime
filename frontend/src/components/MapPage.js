@@ -1,15 +1,21 @@
 import { MapContainer, TileLayer } from 'react-leaflet';
 import { GeoJSON } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
-import '../styles/HomePage.css';
+import '../styles/MapPage.css';
 import { useState } from 'react';
 import regionalData from '../data/final_df.json';
 import geoData from '../data/Counties_and_Unitary_Authorities_December_2024_Boundaries_UK_BFE_-1559183835153833632.json';
+import { useLocation } from 'react-router-dom';
 
-function HomePage() {
+
+function MapPage() {
     const [scoreType, setScoreType] = useState('crimeScore');
     const [selectedYear, setSelectedYear] = useState(2024);
     const [selectedMonth, setSelectedMonth] = useState(12);
+
+    const location = useLocation();
+    const isPreview = new URLSearchParams(location.search).get('preview') === 'true';
+
 
     // Dynamic mapping based on selected score type
     const regionalScoreMap = {};
@@ -83,62 +89,67 @@ function HomePage() {
 
     return (
         <div className="Map">
-            <div className="legend">
-                <div className={`gradient-bar ${scoreType === 'sentimentScore' ? 'sentiment' : 'crime'}`}></div>
-                <div className={`legend-labels ${scoreType === 'sentimentScore' ? 'sentiment' : 'crime'}`}>
-                    {scoreType === 'sentimentScore' ? (
-                        <>
-                            <span>0</span>
-                            <span>0.2</span>
-                            <span>0.4</span>
-                            <span>0.6</span>
-                            <span>0.8</span>
-                            <span>1</span>
-                        </>
-                    ) : (
-                        <>
-                            <span>1</span>
-                            <span>10</span>
-                            <span>50</span>
-                            <span>100</span>
-                            <span>250</span>
-                            <span>800</span>
-                        </>
-                    )}
+            {!isPreview &&
+                (<div>
+                    <div className="legend">
+                        <div className={`gradient-bar ${scoreType === 'sentimentScore' ? 'sentiment' : 'crime'}`}></div>
+                        <div className={`legend-labels ${scoreType === 'sentimentScore' ? 'sentiment' : 'crime'}`}>
+                            {scoreType === 'sentimentScore' ? (
+                                <>
+                                    <span>0</span>
+                                    <span>0.2</span>
+                                    <span>0.4</span>
+                                    <span>0.6</span>
+                                    <span>0.8</span>
+                                    <span>1</span>
+                                </>
+                            ) : (
+                                <>
+                                    <span>1</span>
+                                    <span>10</span>
+                                    <span>50</span>
+                                    <span>100</span>
+                                    <span>250</span>
+                                    <span>800</span>
+                                </>
+                            )}
+                        </div>
+                    </div>
+
+
+                    <div className="score-toggle">
+                        <p>Scores</p>
+                        <button
+                            className={scoreType === 'crimeScore' ? 'red' : ''}
+                            onClick={() => setScoreType('crimeScore')}
+                        >
+                            Detected Crime Rate
+                        </button>
+                        <button
+                            className={scoreType === 'sentimentScore' ? 'green' : ''}
+                            onClick={() => setScoreType('sentimentScore')}
+                        >
+                            Negative Sentiment
+                        </button>
+                    </div>
+
+                    <div className="time-selector-container">
+                        <div className="time-selector-card">
+                            <select value={selectedYear} onChange={(e) => setSelectedYear(Number(e.target.value))}>
+                                {[2019, 2020, 2021, 2022, 2023, 2024].map(year => (
+                                    <option key={year} value={year}>{year}</option>
+                                ))}
+                            </select>
+                            <select value={selectedMonth} onChange={(e) => setSelectedMonth(Number(e.target.value))}>
+                                {[...Array(12)].map((_, i) => (
+                                    <option key={i + 1} value={i + 1}>{i + 1}</option>
+                                ))}
+                            </select>
+                        </div>
+                    </div>
                 </div>
-            </div>
-
-
-            <div className="score-toggle">
-                <p>Scores</p>
-                <button
-                    className={scoreType === 'crimeScore' ? 'red' : ''}
-                    onClick={() => setScoreType('crimeScore')}
-                >
-                    Detected Crime Rate
-                </button>
-                <button
-                    className={scoreType === 'sentimentScore' ? 'green' : ''}
-                    onClick={() => setScoreType('sentimentScore')}
-                >
-                    Negative Sentiment
-                </button>
-            </div>
-
-            <div className="time-selector-container">
-                <div className="time-selector-card">
-                    <select value={selectedYear} onChange={(e) => setSelectedYear(Number(e.target.value))}>
-                        {[2019, 2020, 2021, 2022, 2023, 2024].map(year => (
-                            <option key={year} value={year}>{year}</option>
-                        ))}
-                    </select>
-                    <select value={selectedMonth} onChange={(e) => setSelectedMonth(Number(e.target.value))}>
-                        {[...Array(12)].map((_, i) => (
-                            <option key={i + 1} value={i + 1}>{i + 1}</option>
-                        ))}
-                    </select>
-                </div>
-            </div>
+                )
+            }
 
             <MapContainer
                 center={[57.4907, -4.2026]}
@@ -169,4 +180,4 @@ function HomePage() {
     );
 }
 
-export default HomePage;
+export default MapPage;
