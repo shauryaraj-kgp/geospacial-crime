@@ -15,7 +15,7 @@ const getMonthlyCrimeData = (region) => {
         return {
             month,
             crime: entry ? parseFloat(entry['DETECTED CRIME']) : null,
-            sentiment: entry ? parseFloat(entry['neg_score']) : null
+            sentiment: entry ? parseFloat(entry['neg_ratio']) : null
         };
     });
 };
