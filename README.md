@@ -19,5 +19,3 @@ Visit: http://localhost:5173
 Data lives in `frontend/src/data/` as JSON files.
 
 ---
-
-MIT License
