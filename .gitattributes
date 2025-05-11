@@ -1,4 +1,4 @@
-frontend/public/data/Counties_and_Unitary_Authorities_December_2024_Boundaries_UK_BFE_-1559183835153833632.json filter=lfs diff=lfs merge=lfs -text
+*.json filter=lfs diff=lfs merge=lfs -text
 * !text !filter !merge !diff
 frontend/public/data/scotland-geodata.json filter=lfs diff=lfs merge=lfs -text
 backend/full_dataset.csv filter=lfs diff=lfs merge=lfs -text
