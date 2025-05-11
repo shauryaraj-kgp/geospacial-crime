@@ -2,9 +2,8 @@ import { MapContainer, TileLayer } from 'react-leaflet';
 import { GeoJSON } from 'react-leaflet';
 import 'leaflet/dist/leaflet.css';
 import '../styles/MapPage.css';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import regionalData from '../data/final_df.json';
-import geoData from '../data/Counties_and_Unitary_Authorities_December_2024_Boundaries_UK_BFE_-1559183835153833632.json';
 import { useLocation } from 'react-router-dom';
 
 
@@ -16,6 +15,19 @@ function MapPage() {
     const location = useLocation();
     const isPreview = new URLSearchParams(location.search).get('preview') === 'true';
 
+    const monthNames = [
+        'Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun',
+        'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'
+    ];
+
+    const [geoData, setGeoData] = useState(null);
+
+    useEffect(() => {
+        fetch('/data/Counties_and_Unitary_Authorities_December_2024_Boundaries_UK_BFE_-1559183835153833632.json')
+            .then((res) => res.json())
+            .then((data) => setGeoData(data))
+            .catch((err) => console.error('Failed to load geoData:', err));
+    }, []);
 
     // Dynamic mapping based on selected score type
     const regionalScoreMap = {};
@@ -135,18 +147,19 @@ function MapPage() {
 
                     <div className="time-selector-container">
                         <div className="time-selector-card">
+                            <select value={selectedMonth} onChange={(e) => setSelectedMonth(Number(e.target.value))}>
+                                {monthNames.map((name, i) => (
+                                    <option key={i + 1} value={i + 1}>{name}</option>
+                                ))}
+                            </select>
                             <select value={selectedYear} onChange={(e) => setSelectedYear(Number(e.target.value))}>
                                 {[2019, 2020, 2021, 2022, 2023, 2024].map(year => (
                                     <option key={year} value={year}>{year}</option>
                                 ))}
                             </select>
-                            <select value={selectedMonth} onChange={(e) => setSelectedMonth(Number(e.target.value))}>
-                                {[...Array(12)].map((_, i) => (
-                                    <option key={i + 1} value={i + 1}>{i + 1}</option>
-                                ))}
-                            </select>
                         </div>
                     </div>
+
                 </div>
                 )
             }
@@ -162,19 +175,22 @@ function MapPage() {
                     url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
                 />
 
-                <GeoJSON
-                    key={`${scoreType}-${selectedYear}-${selectedMonth}`}
-                    data={geoData}
-                    style={regionStyle}
-                    onEachFeature={(feature, layer) => {
-                        const regionName = feature.properties.CTYUA24NM;
-                        const score = getRegionScore(regionName);
-                        const label = scoreType === 'crimeScore' ? 'Crime Rate' : 'Negative Sentiment';
-                        layer.bindPopup(
-                            `<strong>${regionName}</strong><br>${label} (${selectedMonth}/${selectedYear}): ${score?.toFixed(2) ?? 'N/A'}`
-                        );
-                    }}
-                />
+                {geoData && (
+                    <GeoJSON
+                        key={`${scoreType}-${selectedYear}-${selectedMonth}`}
+                        data={geoData}
+                        style={regionStyle}
+                        onEachFeature={(feature, layer) => {
+                            const regionName = feature.properties.CTYUA24NM;
+                            const score = getRegionScore(regionName);
+                            const label = scoreType === 'crimeScore' ? 'Crime Rate' : 'Negative Sentiment';
+                            layer.bindPopup(
+                                `<strong>${regionName}</strong><br>${label} (${selectedMonth}/${selectedYear}): ${score?.toFixed(2) ?? 'N/A'}`
+                            );
+                        }}
+                    />
+                )}
+
             </MapContainer>
         </div>
     );
