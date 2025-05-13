@@ -1,0 +1,34 @@
+.chart-header-horizontal {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 30px;
+    /* spacing between Region, Year, Month */
+    margin-bottom: 20px;
+    flex-wrap: wrap;
+}
+
+.filter-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+    /* spacing between label and input */
+    min-width: 150px;
+}
+
+.filter-label {
+    font-weight: bold;
+    color: #2c662d;
+    font-size: 0.95rem;
+    margin-bottom: 2px;
+}
+
+.dropdown-select {
+    padding: 6px 12px;
+    border-radius: 20px;
+    border: 1px solid #ccc;
+    background-color: white;
+    font-size: 0.9rem;
+    color: #333;
+    cursor: pointer;
+}

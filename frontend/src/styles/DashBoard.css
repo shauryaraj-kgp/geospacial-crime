@@ -21,8 +21,8 @@
 .dashboard-header h1 {
     font-size: 3rem;
     color: #eaffea;
-    /* Dark green */
     margin-bottom: 10px;
+    text-shadow: 3px 3px 6px rgb(0, 0, 0);
 }
 
 .dashboard-header p {
@@ -30,8 +30,9 @@
     margin-bottom: 50px;
     font-size: 1.2rem;
     color: #eaffea;
-    /* Olive green */
     line-height: 1.6;
+    text-shadow: 3px 3px 6px rgb(0, 0, 0);
+
 }
 
 .dashboard-main {
@@ -47,7 +48,7 @@
     background-color: #ffffff;
     padding: 20px;
     border-radius: 12px;
-    box-shadow: 0 6px 16px rgba(44, 102, 45, 0.1);
+    box-shadow: 0 0 20px rgba(0, 0, 0, 1);
     /* Soft green shadow */
     transition: transform 0.2s ease;
 }
