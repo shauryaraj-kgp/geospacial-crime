@@ -91,6 +91,7 @@ select:focus {
     position: relative;
     overflow: hidden;
     border-radius: 12px;
+    min-height: 60vh;
 }
 
 .map-overlay {
