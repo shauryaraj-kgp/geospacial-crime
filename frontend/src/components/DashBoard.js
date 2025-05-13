@@ -160,7 +160,8 @@ const DashBoard = () => {
                             >
                                 {Array.from({ length: 12 }, (_, i) => (
                                     <option key={i + 1} value={i + 1}>
-                                        {i + 1}
+                                        {['January', 'February', 'March', 'April', 'May', 'June', 'July',
+                                            'August', 'September', 'October', 'November', 'December'][i]}
                                     </option>
                                 ))}
                             </select>
