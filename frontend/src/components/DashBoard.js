@@ -206,8 +206,9 @@ const DashBoard = () => {
 
                 {selectedRegion && locationQuery && selectedMonth && selectedYear &&
                     <div className="dashboard-main">
+
+                        {/* Monthly Crime Data Line Chart */}
                         <Paper sx={{ p: 3, mb: 3, boxShadow: 5 }}>
-                            {/* Monthly Crime Data Line Chart */}
                             <LineChart
                                 height={320}
                                 xAxis={[
@@ -220,31 +221,54 @@ const DashBoard = () => {
                                     },
                                 ]}
                                 yAxis={[
-                                    { id: 'left', label: 'Detected Crime' },
-                                    { id: 'right', label: 'Negative Sentiment', position: 'right' },
+                                    { label: 'Detected Crime' }
                                 ]}
                                 series={[
                                     {
-                                        yAxisKey: 'left',
                                         data: monthlyChartData.map((d) => d.crime),
                                         label: 'Detected Crime',
                                         color: '#ff4d4f',
                                         curve: 'monotone',
-                                    },
-                                    {
-                                        yAxisKey: 'right',
-                                        data: monthlyChartData.map((d) => d.sentiment),
-                                        label: 'Negative Sentiment',
-                                        color: '#52c41a',
-                                        curve: 'monotone',
+                                        area: true,
                                     },
                                 ]}
                                 tooltip={{ trigger: 'axis' }}
                             />
                         </Paper>
 
+                        {/* Negative Sentiment Line Chart */}
                         <Paper sx={{ p: 3, mb: 3, boxShadow: 5 }}>
-                            {/* Daily Crime Data Line Chart */}
+                            <LineChart
+                                height={320}
+                                xAxis={[
+                                    {
+                                        data: monthlyChartData.map((d) => d.month),
+                                        valueFormatter: (value) =>
+                                            ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
+                                                'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][value - 1],
+                                        label: 'Month',
+                                    }
+                                ]}
+                                yAxis={[
+                                    {
+                                        label: 'Negative Sentiment',
+                                    },
+                                ]}
+                                series={[
+                                    {
+                                        data: monthlyChartData.map((d) => d.sentiment),
+                                        label: 'Negative Sentiment',
+                                        color: '#52c41a',
+                                        curve: 'monotone',
+                                        area: true,
+                                    },
+                                ]}
+                                tooltip={{ trigger: 'axis' }}
+                            />
+                        </Paper>
+
+                        {/* Daily Crime Data Line Chart */}
+                        <Paper sx={{ p: 3, mb: 3, boxShadow: 5 }}>
                             <LineChart
                                 height={320}
                                 xAxis={[
@@ -264,6 +288,7 @@ const DashBoard = () => {
                                         label: 'Detected Crime',
                                         color: '#ff4d4f',
                                         curve: 'monotone',
+                                        area: true
                                     },
                                 ]}
                                 tooltip={{ trigger: 'axis' }}
