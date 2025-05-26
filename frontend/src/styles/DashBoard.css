@@ -1,16 +1,8 @@
-/* DashBoard.css */
-
-.dashboard-wrapper {
-    background-image: url('../assets/topographic-line-contour-map-background-geographic-grid-map-vector.jpg');
-}
-
 .dashboard {
-    padding: 20px;
+    padding: 30px;
     font-family: 'Segoe UI', sans-serif;
-    background-color: rgba(44, 102, 45, 0.85);
-    /* Light green background */
-    color: #333;
     min-height: 95vh;
+    background-color: rgb(240, 240, 240);
 }
 
 .dashboard-header {
@@ -19,76 +11,32 @@
 }
 
 .dashboard-header h1 {
-    font-size: 3rem;
-    color: #eaffea;
-    margin-bottom: 10px;
-    text-shadow: 3px 3px 6px rgb(0, 0, 0);
+    text-align: left;
+    font-size: 2rem;
+    color: black;
+    margin-top: 0;
+    margin-bottom: 20px;
+    font-weight: normal;
 }
 
 .dashboard-header p {
-    margin: 20px 50px;
-    margin-bottom: 50px;
+    text-align: left;
     font-size: 1.2rem;
-    color: #eaffea;
-    line-height: 1.6;
-    text-shadow: 3px 3px 6px rgb(0, 0, 0);
-
+    color: black;
+    margin-top: 0;
+    margin-bottom: 10px;
+    font-weight: lighter;
 }
 
 .dashboard-main {
     display: flex;
+    flex-direction: column;
     flex-wrap: wrap;
     gap: 20px;
     justify-content: space-between;
 }
 
-.chart-panel,
-.map-panel {
-    flex: 1 1 45%;
-    background-color: #ffffff;
-    padding: 20px;
-    border-radius: 12px;
-    box-shadow: 0 0 20px rgba(0, 0, 0, 1);
-    /* Soft green shadow */
-    transition: transform 0.2s ease;
-}
-
-.chart-panel:hover,
-.map-panel:hover {
-    transform: translateY(-4px);
-}
-
-.chart-header {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 10px;
-    margin-bottom: 15px;
-}
-
-.chart-header label {
-    font-weight: bold;
-    font-size: 1rem;
-    color: #2c662d;
-}
-
-select {
-    padding: 8px 12px;
-    font-size: 16px;
-    border-radius: 8px;
-    border: 1px solid #92c36b;
-    background-color: #f6fff2;
-    color: #2c662d;
-    outline: none;
-    transition: border 0.3s ease;
-}
-
-select:hover,
-select:focus {
-    border-color: #4b9444;
-}
-
-.map-preview {
+/* .map-preview {
     position: relative;
     overflow: hidden;
     border-radius: 12px;
@@ -117,16 +65,4 @@ select:focus {
 
 .map-preview:hover .map-overlay {
     opacity: 1;
-}
-
-/* Responsive tweaks */
-@media (max-width: 900px) {
-    .dashboard-main {
-        flex-direction: column;
-    }
-
-    .chart-panel,
-    .map-panel {
-        flex: 1 1 100%;
-    }
-}
+} */
