@@ -124,8 +124,10 @@ export default function MainLayout() {
                 component="main"
                 sx={{
                     flexGrow: 1,
+                    backgroundColor: 'rgb(240, 240, 240)',
                     width: { sm: `calc(100% - ${drawerWidth}px)` }
                 }}
+
             >
                 <Outlet />
             </Box>
