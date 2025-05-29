@@ -26,7 +26,7 @@ const MapPage = () => {
             <header className="map-header">
                 <h1>Scotland Interactive Crime Map</h1>
                 <p>
-                    abracadabra needs to fix this!!! NIGGEERRRRR!!!!
+                    needs fixing
                 </p>
             </header>
             <Box sx={{ height: '100vh' }}>
