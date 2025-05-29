@@ -1,6 +1,6 @@
 import React, { useState, useMemo } from 'react';
 // import { LineChart, Line, XAxis, YAxis, CartesianGrid, Tooltip, ResponsiveContainer } from 'recharts';
-import regionalData from '../data/final_df.json';
+import regionalData from '../data/new_monthly_data.json';
 import daywiseData from '../data/daywise_crime.json';
 import '../styles/DashBoard.css';
 
