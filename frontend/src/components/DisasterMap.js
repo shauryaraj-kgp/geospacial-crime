@@ -8,6 +8,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Autocomplete } from '@mui/material';
+import { Tabs, Tab } from '@mui/material';
 
 import {
     Box,
@@ -37,6 +38,10 @@ import {
     Mood as MoodIcon
 } from '@mui/icons-material';
 
+const metaFields = [
+    'source_location', 'COUNCIL NAME', 'WARD CODE', 'Population_Census_2022-03-20', 'Area', 'longitude', 'latitude', 'year', 'month', 'DETECTED CRIME', 'neg_ratio'
+];
+
 const DisasterMap = () => {
     const [viewState, setViewState] = useState({
         longitude: -4.2026,
@@ -55,6 +60,7 @@ const DisasterMap = () => {
     const [selectedDate, setSelectedDate] = useState(new Date(2024, 11));
     const [popupInfo, setPopupInfo] = useState(null);
     const mapRef = useRef(null);
+    const [tabIndex, setTabIndex] = useState(0);
 
     // Get all unique council areas from regional data
     const areaOptions = useMemo(() => {
@@ -203,8 +209,8 @@ const DisasterMap = () => {
     // Handle area selection from search
     const handleAreaSelect = (event, newValue) => {
         setSelectedArea(newValue);
-
         if (newValue) {
+            setTabIndex(1); // Switch to Area Details tab
             flyToLocation(newValue.longitude, newValue.latitude, 9);
 
             const score = regionalData.find(
@@ -227,6 +233,7 @@ const DisasterMap = () => {
                 });
             }
         } else {
+            setTabIndex(0); // Switch back to Top 5 Areas tab
             setPopupInfo(null);
         }
     };
@@ -278,6 +285,35 @@ const DisasterMap = () => {
         const end = new Date(2024, 11);  // December 2024
         return date >= start && date <= end;
     };
+
+    // Switch to Top 5 Areas tab when selectedArea becomes null
+    useEffect(() => {
+        if (selectedArea === null) {
+            setTabIndex(0);
+        }
+    }, [selectedArea]);
+
+    // Get area crime details for selected area/month/year
+    let areaCrimeDetails = null;
+    if (selectedArea) {
+        areaCrimeDetails = regionalData.find(entry =>
+            entry['WARD CODE'] === selectedArea.wardCode &&
+            entry.year === selectedYear &&
+            entry.month === selectedMonth
+        );
+    }
+    let topCrimes = [];
+    let totalDetectedCrime = null;
+    if (areaCrimeDetails) {
+        // Get all crime fields (exclude meta fields)
+        const crimes = Object.entries(areaCrimeDetails)
+            .filter(([key, value]) => !metaFields.includes(key) && typeof value === 'number' && value > 0)
+            .map(([key, value]) => ({ crime: key, value }));
+        // Sort by value descending
+        crimes.sort((a, b) => b.value - a.value);
+        topCrimes = crimes.slice(0, 5);
+        totalDetectedCrime = areaCrimeDetails['DETECTED CRIME'];
+    }
 
     return (
         <>
@@ -415,63 +451,116 @@ const DisasterMap = () => {
                     <Box sx={{ flex: 0.3 }}>
                         <Card sx={{ height: '100%', overflow: 'auto' }}>
                             <CardContent>
-                                <Typography variant="h6" gutterBottom>
-                                    Analysis Panel
-                                </Typography>
+                                <Tabs value={tabIndex} onChange={(_, v) => setTabIndex(v)} variant="fullWidth" sx={{ mb: 2 }}>
+                                    <Tab label="Top Areas" />
+                                    <Tab label="Area Details" />
+                                </Tabs>
 
-                                <Box sx={{ mb: 2 }}>
-                                    <Typography variant="subtitle2" gutterBottom>
-                                        Select Month and Year
-                                    </Typography>
-                                    <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                        <DatePicker
-                                            views={['year', 'month']}
-                                            value={selectedDate}
-                                            onChange={handleDateChange}
-                                            shouldDisableDate={(date) => !isDateInRange(date)}
-                                            minDate={new Date(2019, 3)}
-                                            maxDate={new Date(2024, 11)}
-                                            slotProps={{
-                                                textField: {
-                                                    fullWidth: true,
-                                                    size: "small"
-                                                }
-                                            }}
-                                        />
-                                    </LocalizationProvider>
-                                </Box>
+                                {tabIndex === 0 && (
+                                    <>
+                                        <Box sx={{ mb: 2 }}>
+                                            <Typography variant="subtitle2" gutterBottom>
+                                                Select Month and Year
+                                            </Typography>
+                                            <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                                <DatePicker
+                                                    views={['year', 'month']}
+                                                    value={selectedDate}
+                                                    onChange={handleDateChange}
+                                                    shouldDisableDate={(date) => !isDateInRange(date)}
+                                                    minDate={new Date(2019, 3)}
+                                                    maxDate={new Date(2024, 11)}
+                                                    slotProps={{
+                                                        textField: {
+                                                            fullWidth: true,
+                                                            size: "small"
+                                                        }
+                                                    }}
+                                                />
+                                            </LocalizationProvider>
+                                        </Box>
+                                        <Divider sx={{ my: 2 }} />
+                                        <Typography variant="subtitle2" gutterBottom>
+                                            Top 5 Areas - {scoreType === 'crimeScore' ? 'Highest Crime Rate' : 'Most Negative Sentiment'}
+                                        </Typography>
+                                        <List dense>
+                                            {topAreas.map((area, index) => {
+                                                // Find coordinates for this area
+                                                const areaOption = areaOptions.find(opt => opt.wardCode === area.wardCode);
+                                                return (
+                                                    <ListItem
+                                                        key={area.wardCode}
+                                                        button
+                                                        onClick={() => {
+                                                            if (areaOption) {
+                                                                flyToLocation(areaOption.longitude, areaOption.latitude, 9);
+                                                                setPopupInfo({
+                                                                    longitude: areaOption.longitude,
+                                                                    latitude: areaOption.latitude,
+                                                                    label: area.name,
+                                                                    value: area.score
+                                                                });
+                                                                setSelectedArea(areaOption);
+                                                                setTabIndex(1);
+                                                            }
+                                                        }}
+                                                        sx={{
+                                                            backgroundColor: index === 0 ? 'rgba(255, 0, 0, 0.1)' : 'transparent',
+                                                            borderRadius: 1,
+                                                            mb: 0.5,
+                                                            cursor: areaOption ? 'pointer' : 'default'
+                                                        }}
+                                                    >
+                                                        <ListItemText
+                                                            primary={`${index + 1}. ${area.name}`}
+                                                            secondary={`${scoreType === 'crimeScore' ? 'Crime Rate' : 'Negative Ratio'}: ${area.score.toFixed(2)}`}
+                                                        />
+                                                        {index === 0 && (
+                                                            <Box component="span" sx={{ ml: 1 }}>
+                                                                {scoreType === 'crimeScore' ?
+                                                                    <WarningIcon color="error" /> :
+                                                                    <MoodIcon sx={{ color: 'orange' }} />
+                                                                }
+                                                            </Box>
+                                                        )}
+                                                    </ListItem>
+                                                );
+                                            })}
+                                        </List>
+                                    </>
+                                )}
 
-                                <Divider sx={{ my: 2 }} />
-
-                                <Typography variant="subtitle2" gutterBottom>
-                                    Top 5 Areas - {scoreType === 'crimeScore' ? 'Highest Crime Rate' : 'Most Negative Sentiment'}
-                                </Typography>
-
-                                <List dense>
-                                    {topAreas.map((area, index) => (
-                                        <ListItem
-                                            key={area.wardCode}
-                                            sx={{
-                                                backgroundColor: index === 0 ? 'rgba(255, 0, 0, 0.1)' : 'transparent',
-                                                borderRadius: 1,
-                                                mb: 0.5
-                                            }}
-                                        >
-                                            <ListItemText
-                                                primary={`${index + 1}. ${area.name}`}
-                                                secondary={`${scoreType === 'crimeScore' ? 'Crime Rate' : 'Negative Ratio'}: ${area.score.toFixed(2)}`}
-                                            />
-                                            {index === 0 && (
-                                                <Box component="span" sx={{ ml: 1 }}>
-                                                    {scoreType === 'crimeScore' ?
-                                                        <WarningIcon color="error" /> :
-                                                        <MoodIcon sx={{ color: 'orange' }} />
-                                                    }
-                                                </Box>
+                                {tabIndex === 1 && selectedArea && (
+                                    <>
+                                        <Typography variant="h6" gutterBottom>
+                                            {selectedArea.label} - {selectedMonth}/{selectedYear}
+                                        </Typography>
+                                        <Typography variant="subtitle2" gutterBottom>
+                                            Top Crimes
+                                        </Typography>
+                                        <List dense>
+                                            {topCrimes.length > 0 ? topCrimes.map((crime, idx) => (
+                                                <ListItem key={crime.crime}>
+                                                    <ListItemText
+                                                        primary={`${idx + 1}. ${crime.crime}`}
+                                                        secondary={`Incidents: ${crime.value}`}
+                                                    />
+                                                </ListItem>
+                                            )) : (
+                                                <ListItem>
+                                                    <ListItemText primary="No crimes reported" />
+                                                </ListItem>
                                             )}
-                                        </ListItem>
-                                    ))}
-                                </List>
+                                        </List>
+                                        <Divider sx={{ my: 2 }} />
+                                        <Typography variant="subtitle2" gutterBottom>
+                                            Total Detected Crime
+                                        </Typography>
+                                        <Typography variant="h5" color="error" gutterBottom>
+                                            {totalDetectedCrime !== null ? totalDetectedCrime : 'N/A'}
+                                        </Typography>
+                                    </>
+                                )}
                             </CardContent>
                         </Card>
                     </Box>

@@ -12,13 +12,13 @@ import {
     TableSortLabel, LinearProgress, Alert, CircularProgress,
     Card, CardContent, Stack, Stepper, Step, StepLabel,
     Dialog, DialogTitle, DialogContent, DialogActions,
-    Snackbar, Autocomplete
+    Snackbar, Autocomplete, List, ListItem, ListItemText
 } from '@mui/material';
 import {
     Search, Add, FilterList, CloudDownload,
     DeleteOutline, EditOutlined, VisibilityOutlined,
     LocationOn, CheckCircle, HighlightOff, LocalHospital,
-    School, HomeWork, Engineering, WaterDrop
+    School, HomeWork, Engineering, WaterDrop, Group, MoodBad
 } from '@mui/icons-material';
 import {
     LineChart
@@ -205,96 +205,155 @@ const DashBoard = () => {
 
 
                 {selectedRegion && locationQuery && selectedMonth && selectedYear &&
-                    <div className="dashboard-main">
-
-                        {/* Monthly Crime Data Line Chart */}
-                        <Paper sx={{ p: 3, mb: 3, boxShadow: 5 }}>
-                            <LineChart
-                                height={320}
-                                xAxis={[
-                                    {
+                    <Box className="dashboard-main" sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
+                        {/* Left: Charts (70%) */}
+                        <Box sx={{ flex: 0.7, minWidth: 0 }}>
+                            {/* Monthly Crime Data Line Chart */}
+                            <Paper sx={{ p: 3, mb: 3, boxShadow: 5 }}>
+                                <LineChart
+                                    height={220}
+                                    xAxis={[{
                                         data: monthlyChartData.map((d) => d.month),
-                                        valueFormatter: (value) =>
-                                            ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
-                                                'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][value - 1],
+                                        valueFormatter: (value) => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][value - 1],
                                         label: 'Month',
-                                    },
-                                ]}
-                                yAxis={[
-                                    { label: 'Detected Crime' }
-                                ]}
-                                series={[
-                                    {
+                                    }]}
+                                    yAxis={[{ label: 'Detected Crime' }]}
+                                    series={[{
                                         data: monthlyChartData.map((d) => d.crime),
                                         label: 'Detected Crime',
                                         color: '#ff4d4f',
                                         curve: 'monotone',
                                         area: true,
-                                    },
-                                ]}
-                                tooltip={{ trigger: 'axis' }}
-                            />
-                        </Paper>
-
-                        {/* Negative Sentiment Line Chart */}
-                        <Paper sx={{ p: 3, mb: 3, boxShadow: 5 }}>
-                            <LineChart
-                                height={320}
-                                xAxis={[
-                                    {
+                                    }]}
+                                    tooltip={{ trigger: 'axis' }}
+                                />
+                            </Paper>
+                            {/* Negative Sentiment Line Chart */}
+                            <Paper sx={{ p: 3, mb: 3, boxShadow: 5 }}>
+                                <LineChart
+                                    height={220}
+                                    xAxis={[{
                                         data: monthlyChartData.map((d) => d.month),
-                                        valueFormatter: (value) =>
-                                            ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul',
-                                                'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][value - 1],
+                                        valueFormatter: (value) => ['Jan', 'Feb', 'Mar', 'Apr', 'May', 'Jun', 'Jul', 'Aug', 'Sep', 'Oct', 'Nov', 'Dec'][value - 1],
                                         label: 'Month',
-                                    }
-                                ]}
-                                yAxis={[
-                                    {
-                                        label: 'Negative Sentiment',
-                                    },
-                                ]}
-                                series={[
-                                    {
+                                    }]}
+                                    yAxis={[{ label: 'Negative Sentiment' }]}
+                                    series={[{
                                         data: monthlyChartData.map((d) => d.sentiment),
                                         label: 'Negative Sentiment',
                                         color: '#52c41a',
                                         curve: 'monotone',
                                         area: true,
-                                    },
-                                ]}
-                                tooltip={{ trigger: 'axis' }}
-                            />
-                        </Paper>
-
-                        {/* Daily Crime Data Line Chart */}
-                        <Paper sx={{ p: 3, mb: 3, boxShadow: 5 }}>
-                            <LineChart
-                                height={320}
-                                xAxis={[
-                                    {
-                                        data: dailyChartData.map((d) => d.day),
-                                        label: 'Day',
-                                    },
-                                ]}
-                                yAxis={[
-                                    {
-                                        label: 'Detected Crime',
-                                    },
-                                ]}
-                                series={[
-                                    {
+                                    }]}
+                                    tooltip={{ trigger: 'axis' }}
+                                />
+                            </Paper>
+                            {/* Daily Crime Data Line Chart */}
+                            <Paper sx={{ p: 3, mb: 3, boxShadow: 5 }}>
+                                <LineChart
+                                    height={220}
+                                    xAxis={[{ data: dailyChartData.map((d) => d.day), label: 'Day' }]}
+                                    yAxis={[{ label: 'Detected Crime' }]}
+                                    series={[{
                                         data: dailyChartData.map((d) => d.crime),
                                         label: 'Detected Crime',
                                         color: '#ff4d4f',
                                         curve: 'monotone',
                                         area: true
-                                    },
-                                ]}
-                                tooltip={{ trigger: 'axis' }}
-                            />
-                        </Paper>
-                    </div>
+                                    }]}
+                                    tooltip={{ trigger: 'axis' }}
+                                />
+                            </Paper>
+                        </Box>
+                        {/* Right: Region Details (30%) */}
+                        <Box sx={{ flex: 0.3, minWidth: 0, mb: 5 }}>
+                            <Card sx={{ height: '100%', overflow: 'auto', p: 2 }}>
+                                {/* Compute region details */}
+                                {(() => {
+                                    // Find the entry for this region/month/year
+                                    const entry = regionalData.find(d => d.source_location === selectedRegion && d.year === selectedYear && d.month === selectedMonth);
+                                    if (!entry) return <Typography>No data for this region/month.</Typography>;
+                                    // Compute ranks
+                                    const monthEntries = regionalData.filter(d => d.year === selectedYear && d.month === selectedMonth);
+                                    const crimeRanked = [...monthEntries].sort((a, b) => b['DETECTED CRIME'] - a['DETECTED CRIME']);
+                                    const sentimentRanked = [...monthEntries].sort((a, b) => b['neg_ratio'] - a['neg_ratio']);
+                                    const crimeRank = crimeRanked.findIndex(d => d.source_location === selectedRegion) + 1;
+                                    const sentimentRank = sentimentRanked.findIndex(d => d.source_location === selectedRegion) + 1;
+                                    // Status color and label
+                                    const crime = entry['DETECTED CRIME'];
+                                    let statusColor = 'success', statusText = 'Safe';
+                                    if (crime > 40) { statusColor = 'error'; statusText = 'High Crime Rate'; }
+                                    else if (crime > 25) { statusColor = 'warning'; statusText = 'Moderately High'; }
+                                    else if (crime > 15) { statusColor = 'yellow'; statusText = 'Relatively Safe'; }
+                                    else { statusColor = 'success'; statusText = 'Safe'; }
+                                    // Crime reasons
+                                    const metaFields = ['source_location', 'COUNCIL NAME', 'WARD CODE', 'Population_Census_2022-03-20', 'Area', 'longitude', 'latitude', 'year', 'month', 'DETECTED CRIME', 'neg_ratio'];
+                                    const reasons = Object.entries(entry)
+                                        .filter(([k, v]) => !metaFields.includes(k) && typeof v === 'number' && v > 0)
+                                        .sort((a, b) => b[1] - a[1]);
+                                    // Meta info
+                                    const council = entry['COUNCIL NAME'];
+                                    const population = entry['Population_Census_2022-03-20'];
+                                    const area = entry['Area'];
+                                    // Optionally: add more info
+                                    return (
+                                        <>
+                                            <Tabs value={0} variant="fullWidth" sx={{ mb: 2 }}>
+                                                <Tab label="Region Details" />
+                                            </Tabs>
+                                            <Typography variant="h5" gutterBottom>{selectedRegion}</Typography>
+                                            <Box sx={{ display: 'flex', alignItems: 'center', mb: 2 }}>
+                                                <Typography variant="h6" color="primary" sx={{ fontWeight: 'bold', fontSize: 32, mr: 2 }}>#{crimeRank}</Typography>
+                                                <Typography variant="body1">Crime Rank</Typography>
+                                                <Divider orientation="vertical" flexItem sx={{ mx: 2 }} />
+                                                <Typography variant="h6" color="secondary" sx={{ fontWeight: 'bold', fontSize: 32, mr: 2 }}>#{sentimentRank}</Typography>
+                                                <Typography variant="body1">Negative Sentiment Rank</Typography>
+                                            </Box>
+                                            <Box sx={{ mb: 2 }}>
+                                                <Chip label={statusText} color={statusColor === 'yellow' ? undefined : statusColor} sx={{ fontSize: 18, bgcolor: statusColor === 'yellow' ? 'yellow' : undefined, color: statusColor === 'yellow' ? 'black' : undefined, px: 2, py: 1, fontWeight: 'bold', fontFamily: 'monospace', fontSize: 22 }} />
+                                                <Typography variant="body2" sx={{ mt: 1 }}>
+                                                    {crime > 50 && 'This region has a high crime rate for this month.'}
+                                                    {crime > 35 && crime <= 50 && 'This region has a moderately high crime rate.'}
+                                                    {crime > 25 && crime <= 35 && 'This region is relatively safe.'}
+                                                    {crime <= 25 && 'This region is considered safe.'}
+                                                </Typography>
+                                            </Box>
+                                            <Divider sx={{ my: 2 }} />
+                                            <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'primary.main', mb: 1, letterSpacing: 1, textTransform: 'uppercase' }}>
+                                                Reasons for Detected Crime
+                                            </Typography>
+                                            <List dense>
+                                                {reasons.length > 0 ? reasons.map(([k, v], i) => (
+                                                    <ListItem key={k}>
+                                                        <ListItemText primary={`${i + 1}. ${k}`} secondary={`Incidents: ${v}`} />
+                                                    </ListItem>
+                                                )) : <ListItem><ListItemText primary="No significant crime reasons reported." /></ListItem>}
+                                            </List>
+                                            <Divider sx={{ my: 2 }} />
+                                            <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'error.main', mb: 1, letterSpacing: 1, textTransform: 'uppercase' }}>
+                                                Total Detected Crime
+                                            </Typography>
+                                            <Typography variant="h5" color="error" gutterBottom>{crime}</Typography>
+                                            <Divider sx={{ my: 2 }} />
+                                            <Typography variant="h6" sx={{ fontWeight: 'bold', color: 'secondary.main', mb: 1, letterSpacing: 1, textTransform: 'uppercase' }}>
+                                                Metadata
+                                            </Typography>
+                                            <Box sx={{ display: 'grid', gridTemplateColumns: 'auto 1fr', rowGap: 1, columnGap: 2, alignItems: 'center', mt: 1, mb: 1, p: 1, bgcolor: '#f5f5f5', borderRadius: 2 }}>
+                                                <HomeWork color="primary" sx={{ mr: 1 }} />
+                                                <Typography variant="body2"><b>Council:</b> {council}</Typography>
+                                                <Group color="action" sx={{ mr: 1 }} />
+                                                <Typography variant="body2"><b>Population:</b> {population?.toLocaleString()}</Typography>
+                                                <Engineering color="secondary" sx={{ mr: 1 }} />
+                                                <Typography variant="body2"><b>Area:</b> {area} km²</Typography>
+                                                <MoodBad color="error" sx={{ mr: 1 }} />
+                                                <Typography variant="body2"><b>Negative Sentiment:</b> {entry['neg_ratio']}</Typography>
+                                            </Box>
+                                        </>
+                                    );
+                                })()}
+                            </Card>
+                        </Box>
+                    </Box>
                 }
             </div>
         </div>
