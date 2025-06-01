@@ -6,6 +6,7 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Map as MapIcon, Assessment as AssessmentIcon, Email as EmailIcon, Warning as WarningIcon } from '@mui/icons-material';
+import { fetchHotspotSummary } from '../api';
 
 const REPORT_TYPES = [
     { value: 'hotspot', label: 'Hotspot Forecast', desc: 'Predicts the most likely crime hotspots for the selected week.' },
@@ -157,6 +158,9 @@ export default function ReportPage() {
     const [loadingStep, setLoadingStep] = useState(0);
     const [finished, setFinished] = useState(false);
     const [snackbarOpen, setSnackbarOpen] = useState(false);
+    const [hotspots, setHotspots] = useState([]);
+    const [summary, setSummary] = useState('');
+    const [error, setError] = useState(null);
 
     const formSteps = getFormSteps({ date, setDate, reportType, setReportType, severity, setSeverity, email, setEmail });
 
@@ -164,11 +168,12 @@ export default function ReportPage() {
     const formProgress = Math.round((formStep / formSteps.length) * 100);
     const loadingProgress = Math.round((loadingStep / LOADING_STEPS.length) * 100);
 
-    // Simulate loading steps
-    const startLoading = () => {
+    // Simulate loading steps and call backend
+    const startLoading = async () => {
         setLoading(true);
         setLoadingStep(0);
         setFinished(false);
+        setError(null);
         let step = 0;
         const interval = setInterval(() => {
             step++;
@@ -176,13 +181,19 @@ export default function ReportPage() {
                 setLoadingStep(step);
             } else {
                 clearInterval(interval);
-                setTimeout(() => {
-                    setLoading(false);
-                    setFinished(true);
-                    setSnackbarOpen(true);
-                }, 1200);
             }
         }, 3000);
+        try {
+            const result = await fetchHotspotSummary();
+            setHotspots(result.hotspots || []);
+            setSummary(result.summary || '');
+        } catch (err) {
+            setError('Failed to generate report. Please try again.');
+        } finally {
+            setLoading(false);
+            setFinished(true);
+            setSnackbarOpen(true);
+        }
     };
 
     const handleNext = () => {
@@ -277,30 +288,44 @@ export default function ReportPage() {
                     </Typography>
                     <Divider sx={{ my: 2 }} />
                     <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4 }}>
-                        {/* Placeholder for Map */}
+                        {/* Map Area (unchanged) */}
                         <Box sx={{ flex: 1, minHeight: 320, bgcolor: '#f5f5f5', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
                             <MapIcon sx={{ fontSize: 80, color: 'grey.400' }} />
                             <Typography variant="subtitle1" color="text.secondary" sx={{ ml: 2 }}>
                                 Map of predicted hotspots will appear here.
                             </Typography>
                         </Box>
-                        {/* Placeholder for Report Summary */}
-                        <Box sx={{ flex: 1 }}>
-                            <Typography variant="h6" gutterBottom>Summary</Typography>
-                            <Typography variant="body1" color="text.secondary">
-                                The model predicts several hotspot areas for the week following your selected date. Detailed report and map will be available here once the backend is connected.
-                            </Typography>
-                            <Divider sx={{ my: 2 }} />
-                            <Typography variant="body2" color="text.secondary">
-                                <b>Region:</b> All of Scotland<br />
-                                <b>Start Month:</b> {date ? date.toLocaleString('default', { month: 'long', year: 'numeric' }) : 'N/A'}<br />
-                                <b>Report Type:</b> {REPORT_TYPES.find(r => r.value === reportType)?.label}<br />
-                                <b>Severity Threshold:</b> {SEVERITY_LEVELS.find(s => s.value === severity)?.label}<br />
-                                <b>Email:</b> {email ? email : 'Not provided'}
-                            </Typography>
-                            <Button variant="outlined" sx={{ mt: 3 }} onClick={handleReset}>Generate Another Report</Button>
+                        {/* Hotspot List */}
+                        <Box sx={{ flex: 1, minHeight: 320, bgcolor: '#e3f2fd', borderRadius: 2, p: 3, boxShadow: 1 }}>
+                            <Typography variant="h6" gutterBottom color="primary">Predicted Hotspots</Typography>
+                            {hotspots.length === 0 ? (
+                                <Typography color="text.secondary">No hotspots detected this week.</Typography>
+                            ) : (
+                                <Box component="ul" sx={{ pl: 2, m: 0 }}>
+                                    {hotspots.map((h, idx) => (
+                                        <li key={idx} style={{ marginBottom: 8 }}>
+                                            <Typography variant="subtitle1" fontWeight={600} color="primary.dark">
+                                                {h.ward}
+                                            </Typography>
+                                            <Typography variant="body2" color="text.secondary">
+                                                {h.council}
+                                            </Typography>
+                                        </li>
+                                    ))}
+                                </Box>
+                            )}
                         </Box>
                     </Box>
+                    {/* Gemini Summary Below */}
+                    <Divider sx={{ my: 3 }} />
+                    <Box sx={{ bgcolor: '#fffde7', borderRadius: 2, p: 3, boxShadow: 0, mt: 2 }}>
+                        <Typography variant="h6" gutterBottom color="secondary">Gemini AI Summary</Typography>
+                        <Typography variant="body1" color="text.secondary" sx={{ whiteSpace: 'pre-line' }}>
+                            {summary}
+                        </Typography>
+                    </Box>
+                    {error && <Typography color="error" sx={{ mt: 2 }}>{error}</Typography>}
+                    <Button variant="outlined" sx={{ mt: 3 }} onClick={handleReset}>Generate Another Report</Button>
                 </Card>
             )}
             <Snackbar

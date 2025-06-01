@@ -1,0 +1,357 @@
+week_start,week_end,PSOS_MMW_Name,COUNCIL NAME,WARD CODE,true,pred
+2024-04-29,2024-05-05,Clydebank Central,West Dunbartonshire,S13002818,0,0
+2024-04-29,2024-05-05,"Broxburn, Uphall and Winchburgh",West Lothian,S13002821,0,1
+2024-04-29,2024-05-05,Midlothian South,Midlothian,S13002695,0,0
+2024-04-29,2024-05-05,Inverurie and District,Aberdeenshire,S13002499,1,1
+2024-04-29,2024-05-05,East Centre,Glasgow City,S13002658,0,0
+2024-04-29,2024-05-05,Airdrie North,North Lanarkshire,S13002718,0,0
+2024-04-29,2024-05-05,"Clarkston, Netherlee and Williamwood",East Renfrewshire,S13002917,0,0
+2024-04-29,2024-05-05,East Livingston and East Calder,West Lothian,S13002824,0,0
+2024-04-29,2024-05-05,"Glenrothes North, Leslie and Markinch",Fife,S13002632,0,0
+2024-04-29,2024-05-05,Cambuslang West,South Lanarkshire,S13002799,1,0
+2024-04-29,2024-05-05,Kilsyth,North Lanarkshire,S13002712,0,0
+2024-04-29,2024-05-05,Coldside,Dundee City,S13002548,0,0
+2024-04-29,2024-05-05,Dingwall and Seaforth,Highland,S13002670,0,1
+2024-04-29,2024-05-05,Pentland Hills,City of Edinburgh,S13002584,0,0
+2024-04-29,2024-05-05,Forfar & District,Angus,S13002510,1,0
+2024-04-29,2024-05-05,West End,Dundee City,S13002547,0,0
+2024-04-29,2024-05-05,Dyce/Bucksburn/Danestone,Aberdeen City,S13002476,0,0
+2024-04-29,2024-05-05,Mid and Upper Nithsdale,Dumfries and Galloway,S13002539,1,1
+2024-04-29,2024-05-05,Mid Galloway and Wigtown West,Dumfries and Galloway,S13002881,1,0
+2024-04-29,2024-05-05,Clydebank Waterfront,West Dunbartonshire,S13002819,0,0
+2024-04-29,2024-05-05,North Berwick Coastal,East Lothian,S13002574,0,0
+2024-04-29,2024-05-05,Prestwick,South Ayrshire,S13002780,1,0
+2024-04-29,2024-05-05,Lochee,Dundee City,S13002546,0,0
+2024-04-29,2024-05-05,Lochar,Dumfries and Galloway,S13002540,0,0
+2024-04-29,2024-05-05,Kilmarnock West and Crosshouse,East Ayrshire,S13002555,0,0
+2024-04-29,2024-05-05,Penicuik,Midlothian,S13002690,0,0
+2024-04-29,2024-05-05,Bonnyrigg,Midlothian,S13002691,1,0
+2024-04-29,2024-05-05,Southside Central,Glasgow City,S13002648,0,0
+2024-04-29,2024-05-05,Kilpatrick,West Dunbartonshire,S13002817,0,0
+2024-04-29,2024-05-05,Clackmannanshire Central,Clackmannanshire,S13002529,0,0
+2024-04-29,2024-05-05,Oban North and Lorn,Argyll and Bute,S13002520,0,0
+2024-04-29,2024-05-05,Cardonald,Glasgow City,S13002970,0,0
+2024-04-29,2024-05-05,Hawick and Hermitage,Scottish Borders,S13002771,0,0
+2024-04-29,2024-05-05,North Isles - Orkney,Orkney Islands,S13002737,0,0
+2024-04-29,2024-05-05,Hazlehead/Queens Cross/Countesswells,Aberdeen City,S13002844,0,0
+2024-04-29,2024-05-05,Forres,Moray,S13002703,1,0
+2024-04-29,2024-05-05,Paisley East and Central,Renfrewshire,S13003079,0,0
+2024-04-29,2024-05-05,Greater Pollok,Glasgow City,S13002643,1,0
+2024-04-29,2024-05-05,East Kilbride Central North,South Lanarkshire,S13002794,0,0
+2024-04-29,2024-05-05,Springburn/Robroyston,Glasgow City,S13002983,0,0
+2024-04-29,2024-05-05,Drumchapel/Anniesland,Glasgow City,S13002654,0,0
+2024-04-29,2024-05-05,The Ferry,Dundee City,S13002552,0,0
+2024-04-29,2024-05-05,North East - Tayside,Dundee City,S13002830,0,0
+2024-04-29,2024-05-05,Inverclyde Central,Inverclyde,S13003013,0,0
+2024-04-29,2024-05-05,Midlothian East,Midlothian,S13002694,0,0
+2024-04-29,2024-05-05,Inverness West,Highland,S13002675,0,0
+2024-04-29,2024-05-05,Strathtay,Perth and Kinross,S13002742,0,0
+2024-04-29,2024-05-05,Speyside Glenlivet,Moray,S13002696,0,0
+2024-04-29,2024-05-05,Grangemouth,Falkirk,S13002610,0,0
+2024-04-29,2024-05-05,Maryhill,Glasgow City,S13002981,0,0
+2024-04-29,2024-05-05,Midlothian West,Midlothian,S13002693,0,0
+2024-04-29,2024-05-05,Hamilton South,South Lanarkshire,S13002805,0,0
+2024-04-29,2024-05-05,Portobello/Craigmillar,City of Edinburgh,S13002599,0,0
+2024-04-29,2024-05-05,Blantyre,South Lanarkshire,S13002801,0,0
+2024-04-29,2024-05-05,Baillieston,Glasgow City,S13002660,0,0
+2024-04-29,2024-05-05,East Berwickshire,Scottish Borders,S13002767,0,1
+2024-04-29,2024-05-05,Hawick and Denholm,Scottish Borders,S13002770,0,0
+2024-04-29,2024-05-05,"Buckhaven, Methil and Wemyss Villages",Fife,S13002640,0,0
+2024-04-29,2024-05-05,Upper Braes,Falkirk,S13002617,0,0
+2024-04-29,2024-05-05,East Kilbride Central South,South Lanarkshire,S13002793,0,0
+2024-04-29,2024-05-05,Lomond North,Argyll and Bute,S13002524,1,0
+2024-04-29,2024-05-05,Irvine Valley,East Ayrshire,S13002558,1,0
+2024-04-29,2024-05-05,Kilmarnock North,East Ayrshire,S13002554,1,0
+2024-04-29,2024-05-05,Peterhead North and Rattray,Aberdeenshire,S13002493,0,0
+2024-04-29,2024-05-05,Falkirk South,Falkirk,S13002615,0,0
+2024-04-29,2024-05-05,Badenoch and Strathspey,Highland,S13002682,0,0
+2024-04-29,2024-05-05,Arbroath East & Lunan,Angus,S13002514,0,0
+2024-04-29,2024-05-05,Kilwinning,North Ayrshire,S13002706,1,0
+2024-04-29,2024-05-05,Armadale and Blackridge,West Lothian,S13002828,0,1
+2024-04-29,2024-05-05,Black Isle,Highland,S13002671,0,0
+2024-04-29,2024-05-05,Clydesdale South,South Lanarkshire,S13002790,0,0
+2024-04-29,2024-05-05,"Maybole, North Carrick and Coylton",South Ayrshire,S13002785,1,0
+2024-04-29,2024-05-05,Fortissat,North Lanarkshire,S13002723,0,0
+2024-04-29,2024-05-05,Ardrossan and Arran,North Ayrshire,S13002708,0,0
+2024-04-29,2024-05-05,Clydesdale West,South Lanarkshire,S13002787,0,0
+2024-04-29,2024-05-05,Coatbridge South,North Lanarkshire,S13002721,0,0
+2024-04-29,2024-05-05,Irvine South,North Ayrshire,S13003041,1,0
+2024-04-29,2024-05-05,Fraserburgh and District,Aberdeenshire,S13002491,0,0
+2024-04-29,2024-05-05,Motherwell West,North Lanarkshire,S13002727,0,0
+2024-04-29,2024-05-05,Pollokshields,Glasgow City,S13002646,0,0
+2024-04-29,2024-05-05,Lower Deeside,Aberdeen City,S13002484,0,0
+2024-04-29,2024-05-05,Tweeddale West,Scottish Borders,S13002761,0,0
+2024-04-29,2024-05-05,Southside/Newington,City of Edinburgh,S13002597,0,0
+2024-04-29,2024-05-05,West Fife and Coastal Villages,Fife,S13002618,0,0
+2024-04-29,2024-05-05,Coatbridge North,North Lanarkshire,S13003048,0,0
+2024-04-29,2024-05-05,Blairgowrie and Glens,Perth and Kinross,S13002740,0,0
+2024-04-29,2024-05-05,Tay Bridgehead,Fife,S13002635,0,0
+2024-04-29,2024-05-05,Thorniewood,North Lanarkshire,S13002724,0,0
+2024-04-29,2024-05-05,Kincorth/Nigg/Cove,Aberdeen City,S13002488,0,1
+2024-04-29,2024-05-05,Fauldhouse and the Breich Valley,West Lothian,S13002825,0,0
+2024-04-29,2024-05-05,Central Buchan,Aberdeenshire,S13002492,0,0
+2024-04-29,2024-05-05,Stranraer and the Rhins,Dumfries and Galloway,S13002880,0,0
+2024-04-29,2024-05-05,Hamilton West and Earnock,South Lanarkshire,S13002804,0,0
+2024-04-29,2024-05-05,Strathmore,Perth and Kinross,S13002739,0,0
+2024-04-29,2024-05-05,Maryfield,Dundee City,S13002549,0,0
+2024-04-29,2024-05-05,Lower Braes,Falkirk,S13002616,0,0
+2024-04-29,2024-05-05,Midstocket/Rosemount,Aberdeen City,S13002482,0,0
+2024-04-29,2024-05-05,Wick and East Caithness,Highland,S13002992,0,0
+2024-04-29,2024-05-05,Peterhead South and Cruden,Aberdeenshire,S13002494,0,0
+2024-04-29,2024-05-05,Doon Valley,East Ayrshire,S13002561,1,0
+2024-04-29,2024-05-05,Dunbar and East Linton,East Lothian,S13002576,0,0
+2024-04-29,2024-05-05,Oban South and the Isles,Argyll and Bute,S13002519,0,0
+2024-04-29,2024-05-05,Airdrie South,North Lanarkshire,S13002722,1,0
+2024-04-29,2024-05-05,Perth City Centre,Perth and Kinross,S13002749,0,0
+2024-04-29,2024-05-05,Kingswells/Sheddocksley/Summerhill,Aberdeen City,S13002478,1,1
+2024-04-29,2024-05-05,Mearns,Aberdeenshire,S13002507,0,1
+2024-04-29,2024-05-05,Inverleith,City of Edinburgh,S13002587,0,0
+2024-04-29,2024-05-05,Tweeddale East,Scottish Borders,S13002762,0,0
+2024-04-29,2024-05-05,George St/Harbour,Aberdeen City,S13002483,0,0
+2024-04-29,2024-05-05,Perth City North,Perth and Kinross,S13002748,0,0
+2024-04-29,2024-05-05,Ballochmyle,East Ayrshire,S13002559,1,0
+2024-04-29,2024-05-05,Mid Berwickshire,Scottish Borders,S13002766,1,1
+2024-04-29,2024-05-05,Murdostoun,North Lanarkshire,S13002730,0,0
+2024-04-29,2024-05-05,East Kilbride West,South Lanarkshire,S13002795,0,0
+2024-04-29,2024-05-05,Strathallan,Perth and Kinross,S13002744,0,0
+2024-04-29,2024-05-05,City Centre,City of Edinburgh,S13002929,0,0
+2024-04-29,2024-05-05,"Lochgelly, Cardenden and Benarty",Fife,S13002952,0,0
+2024-04-29,2024-05-05,Nith,Dumfries and Galloway,S13002541,0,0
+2024-04-29,2024-05-05,Mid Formartine,Aberdeenshire,S13002496,1,0
+2024-04-29,2024-05-05,Abbey,Dumfries and Galloway,S13002884,1,0
+2024-04-29,2024-05-05,Victoria Park,Glasgow City,S13002978,0,0
+2024-04-29,2024-05-05,Bonnybridge and Larbert,Falkirk,S13002613,0,0
+2024-04-29,2024-05-05,Glenboig and Moodiesburn,North Lanarkshire,S13003047,0,0
+2024-04-29,2024-05-05,East Garioch,Aberdeenshire,S13002500,0,0
+2024-04-29,2024-05-05,Inverness Central,Highland,S13002676,0,0
+2024-04-29,2024-05-05,"East Mainland, South Ronaldsay and Burray",Orkney Islands,S13002736,1,0
+2024-04-29,2024-05-05,Paisley South West,Renfrewshire,S13002755,0,0
+2024-04-29,2024-05-05,Stonehaven and Lower Deeside,Aberdeenshire,S13002506,1,0
+2024-04-29,2024-05-05,Haddington and Lammermuir,East Lothian,S13002575,0,0
+2024-04-29,2024-05-05,Inverclyde East Central,Inverclyde,S13002685,0,0
+2024-04-29,2024-05-05,Bothwell and Uddingston,South Lanarkshire,S13002802,0,0
+2024-04-29,2024-05-05,Banchory and Mid Deeside,Aberdeenshire,S13002504,0,0
+2024-04-29,2024-05-05,Steornabhagh a Deas,Western Isles - Eilean Siar,S13002605,1,0
+2024-04-29,2024-05-05,Avondale and Stonehouse,South Lanarkshire,S13002791,0,0
+2024-04-29,2024-05-05,Kilmarnock East and Hurlford,East Ayrshire,S13002556,0,0
+2024-04-29,2024-05-05,Glenrothes Central and Thornton,Fife,S13002633,0,0
+2024-04-29,2024-05-05,North East - Glasgow,Glasgow City,S13002987,0,0
+2024-04-29,2024-05-05,Clackmannanshire West,Clackmannanshire,S13002527,1,0
+2024-04-29,2024-05-05,Fochabers Lhanbryde,Moray,S13002699,0,0
+2024-04-29,2024-05-05,Irvine East,North Ayrshire,S13002705,1,0
+2024-04-29,2024-05-05,Annandale North,Dumfries and Galloway,S13002543,0,0
+2024-04-29,2024-05-05,Perth City South,Perth and Kinross,S13002747,0,0
+2024-04-29,2024-05-05,Airyhall/Broomhill/Garthdee,Aberdeen City,S13002486,1,0
+2024-04-29,2024-05-05,Drum Brae/Gyle,City of Edinburgh,S13002585,0,0
+2024-04-29,2024-05-05,Partick East/Kelvindale,Glasgow City,S13002989,1,0
+2024-04-29,2024-05-05,Clydesdale North,South Lanarkshire,S13002788,0,0
+2024-04-29,2024-05-05,West Mainland,Orkney Islands,S13002735,0,0
+2024-04-29,2024-05-05,Motherwell North,North Lanarkshire,S13002728,0,0
+2024-04-29,2024-05-05,Canal,Glasgow City,S13002656,0,0
+2024-04-29,2024-05-05,Lomond,West Dunbartonshire,S13002814,0,0
+2024-04-29,2024-05-05,Mid Argyll,Argyll and Bute,S13002518,1,1
+2024-04-29,2024-05-05,Bo'ness and Blackness,Falkirk,S13002609,0,0
+2024-04-29,2024-05-05,Hamilton North and East,South Lanarkshire,S13002803,0,0
+2024-04-29,2024-05-05,Coatbridge West,North Lanarkshire,S13002720,0,0
+2024-04-29,2024-05-05,Motherwell South East and Ravenscraig,North Lanarkshire,S13002729,0,0
+2024-04-29,2024-05-05,Preston/Seton/Gosford,East Lothian,S13002572,0,1
+2024-04-29,2024-05-05,Clydesdale East,South Lanarkshire,S13002789,0,0
+2024-04-29,2024-05-05,Inverclyde East,Inverclyde,S13002684,1,0
+2024-04-29,2024-05-05,Strathearn,Perth and Kinross,S13002743,0,0
+2024-04-29,2024-05-05,Airdrie Central,North Lanarkshire,S13002719,0,0
+2024-04-29,2024-05-05,North Kincardine,Aberdeenshire,S13002505,0,0
+2024-04-29,2024-05-05,"Bishopton, Bridge of Weir & Langbank",Renfrewshire,S13002759,0,0
+2024-04-29,2024-05-05,Elgin City North,Moray,S13002701,0,0
+2024-04-29,2024-05-05,Buckie,Moray,S13002698,0,0
+2024-04-29,2024-05-05,Troup,Aberdeenshire,S13002490,0,0
+2024-04-29,2024-05-05,Lerwick North,Shetland Islands,S13002777,0,0
+2024-04-29,2024-05-05,Clackmannanshire East,Clackmannanshire,S13002531,1,0
+2024-04-29,2024-05-05,Elgin City South,Moray,S13002702,0,0
+2024-04-29,2024-05-05,South Kintyre,Argyll and Bute,S13002516,0,0
+2024-04-29,2024-05-05,Mossend and Holytown,North Lanarkshire,S13002726,0,0
+2024-04-29,2024-05-05,Dunfermline Central,Fife,S13002620,0,0
+2024-04-29,2024-05-05,Linlithgow,West Lothian,S13002820,0,0
+2024-04-29,2024-05-05,Stromness and South Isles,Orkney Islands,S13002734,0,0
+2024-04-29,2024-05-05,Shetland North,Shetland Islands,S13002773,0,0
+2024-04-29,2024-05-05,Kelso and District,Scottish Borders,S13002768,1,1
+2024-04-29,2024-05-05,Torry/Ferryhill,Aberdeen City,S13002487,0,0
+2024-04-29,2024-05-05,Rutherglen Central and North,South Lanarkshire,S13002798,0,0
+2024-04-29,2024-05-05,Colinton/Fairmilehead,City of Edinburgh,S13002590,0,0
+2024-04-29,2024-05-05,Brechin & Edzell,Angus,S13002868,0,0
+2024-04-29,2024-05-05,Dunfermline North,Fife,S13002619,0,0
+2024-04-29,2024-05-05,Selkirkshire,Scottish Borders,S13002764,0,0
+2024-04-29,2024-05-05,Newton Mearns South and Eaglesham,East Renfrewshire,S13002918,0,0
+2024-04-29,2024-05-05,"Carse, Kinnaird and Tryst",Falkirk,S13002612,0,0
+2024-04-29,2024-05-05,Dunoon,Argyll and Bute,S13002522,0,0
+2024-04-29,2024-05-05,"Arbroath West, Letham and Friockheim",Angus,S13002872,0,0
+2024-04-29,2024-05-05,Cowdenbeath,Fife,S13002625,1,0
+2024-04-29,2024-05-05,Helensburgh and Lomond South,Inverclyde,S13002526,1,0
+2024-04-29,2024-05-05,Monifieth & Sidlaw,Angus,S13002829,0,0
+2024-04-29,2024-05-05,Hillhead,Glasgow City,S13002651,0,0
+2024-04-29,2024-05-05,"Burntisland, Kinghorn and Western Kirkcaldy",Fife,S13002627,0,0
+2024-04-29,2024-05-05,Linn,Glasgow City,S13002641,0,0
+2024-04-29,2024-05-05,Wishaw,North Lanarkshire,S13002731,0,0
+2024-04-29,2024-05-05,Dalry and West Kilbride,North Ayrshire,S13002709,0,0
+2024-04-29,2024-05-05,Forth and Endrick,Stirling,S13002808,1,0
+2024-04-29,2024-05-05,Montrose & District,Angus,S13002874,0,0
+2024-04-29,2024-05-05,Kilmarnock South,East Ayrshire,S13002557,0,0
+2024-04-29,2024-05-05,Cowal,Argyll and Bute,S13002521,0,0
+2024-04-29,2024-05-05,Carnoustie & District,Angus,S13002871,0,0
+2024-04-29,2024-05-05,Troon,South Ayrshire,S13003087,0,0
+2024-04-29,2024-05-05,Larkhall,South Lanarkshire,S13002806,0,0
+2024-04-29,2024-05-05,Erskine & Inchinnan,Renfrewshire,S13002760,0,0
+2024-04-29,2024-05-05,Rosyth,Fife,S13002622,0,0
+2024-04-29,2024-05-05,Sgir' Uige agus Ceann a Tuath nan Loch,Western Isles - Eilean Siar,S13002603,1,0
+2024-04-29,2024-05-05,Shetland West,Shetland Islands,S13002774,1,0
+2024-04-29,2024-05-05,Carse of Gowrie,Perth and Kinross,S13002738,0,0
+2024-04-29,2024-05-05,"Johnstone North, Kilbarchan, Howwood and Lochwinnoch",Renfrewshire,S13003083,0,0
+2024-04-29,2024-05-05,Kirkcaldy East,Fife,S13002630,1,0
+2024-04-29,2024-05-05,"Barrhead, Liboside and Uplawmoor",East Renfrewshire,S13002914,1,0
+2024-04-29,2024-05-05,Hilton/Woodside/Stockethill,Aberdeen City,S13002480,0,0
+2024-04-29,2024-05-05,Nairn and Cawdor,Highland,S13003007,0,1
+2024-04-29,2024-05-05,Lenzie & Kirkintilloch South,East Dunbartonshire,S13002568,0,0
+2024-04-29,2024-05-05,Kirkcaldy North,Fife,S13002628,0,0
+2024-04-29,2024-05-05,Bishopbriggs North and Campsie,East Dunbartonshire,S13002904,0,0
+2024-04-29,2024-05-05,"Wester Ross, Strathpeffer and Lochalsh",Highland,S13002667,0,0
+2024-04-29,2024-05-05,Glenrothes West and Kinglassie,Fife,S13002631,1,0
+2024-04-29,2024-05-05,Dalkeith,Midlothian,S13002692,0,0
+2024-04-29,2024-05-05,Govan,Glasgow City,S13002645,0,0
+2024-04-29,2024-05-05,Kirriemuir & Dean,Angus,S13002508,0,0
+2024-04-29,2024-05-05,Stirling West,Stirling,S13002811,0,0
+2024-04-29,2024-05-05,Helensburgh and Lomond South,West Dunbartonshire,S13002526,1,0
+2024-04-29,2024-05-05,Inverclyde South,Inverclyde,S13002687,1,0
+2024-04-29,2024-05-05,Bearsden South,East Dunbartonshire,S13002564,0,1
+2024-04-29,2024-05-05,Cumnock and New Cumnock,East Ayrshire,S13002560,1,0
+2024-04-29,2024-05-05,Kintyre and the Islands,Argyll and Bute,S13002517,0,0
+2024-04-29,2024-05-05,Culloden and Ardersier,Highland,S13002679,0,1
+2024-04-29,2024-05-05,Annick,East Ayrshire,S13002553,0,0
+2024-04-29,2024-05-05,West Garioch,Aberdeenshire,S13002498,0,0
+2024-04-29,2024-05-05,Banff and District,Aberdeenshire,S13002489,1,1
+2024-04-29,2024-05-05,Cupar,Fife,S13002638,0,0
+2024-04-29,2024-05-05,Forth,City of Edinburgh,S13002586,0,0
+2024-04-29,2024-05-05,Dennistoun,Glasgow City,S13002988,0,0
+2024-04-29,2024-05-05,Paisley North East and Ralston,Renfrewshire,S13003077,0,0
+2024-04-29,2024-05-05,Kilbirnie and Beith,North Ayrshire,S13002710,0,0
+2024-04-29,2024-05-05,Inverclyde South West,Inverclyde,S13002689,0,0
+2024-04-29,2024-05-05,Tain and Easter Ross,Highland,S13002669,0,0
+2024-04-29,2024-05-05,Ellon and District,Aberdeenshire,S13002497,0,0
+2024-04-29,2024-05-05,North Isles - Shetland,Shetland Islands,S13002772,0,0
+2024-04-29,2024-05-05,Kirkintilloch East and North and Twechar,East Dunbartonshire,S13002907,1,0
+2024-04-29,2024-05-05,"Leven, Kennoway and Largo",Fife,S13002639,0,0
+2024-04-29,2024-05-05,Dunfermline South,Fife,S13002621,0,0
+2024-04-29,2024-05-05,Thurso and Northwest Caithness,Highland,S13002991,0,0
+2024-04-29,2024-05-05,Na Hearadh agus Ceann a Deas nan Loch,Western Isles - Eilean Siar,S13002602,1,0
+2024-04-29,2024-05-05,Giffnock and Thornliebank,East Renfrewshire,S13002579,1,0
+2024-04-29,2024-05-05,Shetland South,Shetland Islands,S13002776,0,0
+2024-04-29,2024-05-05,East Kilbride East,South Lanarkshire,S13002796,0,0
+2024-04-29,2024-05-05,Trossachs and Teith,Stirling,S13002807,1,1
+2024-04-29,2024-05-05,Northfield/Mastrick North,Aberdeen City,S13002479,0,0
+2024-04-29,2024-05-05,Kirkcaldy Central,Fife,S13002629,0,0
+2024-04-29,2024-05-05,Saltcoats and Stevenston,North Ayrshire,S13002707,0,0
+2024-04-29,2024-05-05,Anderston/City/Yorkhill,Glasgow City,S13002976,0,0
+2024-04-29,2024-05-05,Keith and Cullen,Moray,S13002697,0,0
+2024-04-29,2024-05-05,Morningside,City of Edinburgh,S13002928,0,1
+2024-04-29,2024-05-05,"Huntly, Strathbogie and Howe of Alford",Aberdeenshire,S13002502,1,1
+2024-04-29,2024-05-05,Inverness South,Highland,S13002681,0,0
+2024-04-29,2024-05-05,Paisley South East,Renfrewshire,S13003080,1,0
+2024-04-29,2024-05-05,Livingston North,West Lothian,S13002822,1,0
+2024-04-29,2024-05-05,Tillydrone/Seaton/Old Aberdeen,Aberdeen City,S13002481,0,0
+2024-04-29,2024-05-05,North West Dumfries,Dumfries and Galloway,S13002538,0,0
+2024-04-29,2024-05-05,Helensburgh Central,Argyll and Bute,S13002525,0,0
+2024-04-29,2024-05-05,Fountainbridge/Craiglockhart,City of Edinburgh,S13002591,0,0
+2024-04-29,2024-05-05,Lerwick South,Shetland Islands,S13002778,1,0
+2024-04-29,2024-05-05,Steornabhagh a Tuath,Western Isles - Eilean Siar,S13002606,1,0
+2024-04-29,2024-05-05,Langside,Glasgow City,S13002647,0,0
+2024-04-29,2024-05-05,Stirling North,Stirling,S13003118,0,0
+2024-04-29,2024-05-05,Ft William and Ardnamurchan,Highland,S13002683,0,0
+2024-04-29,2024-05-05,St Andrews,Fife,S13002962,1,0
+2024-04-29,2024-05-05,Sighthill/Gorgie,City of Edinburgh,S13002589,0,0
+2024-04-29,2024-05-05,Bellshill,North Lanarkshire,S13002725,0,0
+2024-04-29,2024-05-05,Helensburgh and Lomond South,Argyll and Bute,S13002526,0,0
+2024-04-29,2024-05-05,Eilean a Cheo,Highland,S13002999,0,0
+2024-04-29,2024-05-05,Inverclyde West,Inverclyde,S13002688,0,0
+2024-04-29,2024-05-05,Ayr East,South Ayrshire,S13002782,0,0
+2024-04-29,2024-05-05,Newlands/Auldburn,Glasgow City,S13002642,0,0
+2024-04-29,2024-05-05,Strathmartine,Dundee City,S13002545,1,1
+2024-04-29,2024-05-05,Cromarty Firth,Highland,S13002668,0,0
+2024-04-29,2024-05-05,Liberton/Gilmerton,City of Edinburgh,S13002598,0,0
+2024-04-29,2024-05-05,"Aboyne, Upper Deeside and Donside",Aberdeenshire,S13002503,1,1
+2024-04-29,2024-05-05,Craigentinny/Duddingston,City of Edinburgh,S13002596,0,0
+2024-04-29,2024-05-05,Beinn na Foghla agus Uibhist a Tuath,Western Isles - Eilean Siar,S13002601,0,0
+2024-04-29,2024-05-05,Clackmannanshire North,Clackmannanshire,S13002528,1,0
+2024-04-29,2024-05-05,Annandale East and Eskdale,Dumfries and Galloway,S13002544,0,0
+2024-04-29,2024-05-05,Rutherglen South,South Lanarkshire,S13002797,0,0
+2024-04-29,2024-05-05,Kyle,South Ayrshire,S13002784,1,1
+2024-04-29,2024-05-05,Dumbarton,West Dunbartonshire,S13002816,0,0
+2024-04-29,2024-05-05,Almond and Earn,Perth and Kinross,S13002746,0,0
+2024-04-29,2024-05-05,Inverness Ness-side,Highland,S13003004,0,0
+2024-04-29,2024-05-05,Jedburgh and District,Scottish Borders,S13002769,0,0
+2024-04-29,2024-05-05,Bathgate,West Lothian,S13002827,0,0
+2024-04-29,2024-05-05,East Neuk and Landward,Fife,S13002637,0,0
+2024-04-29,2024-05-05,Bannockburn,Stirling,S13002813,0,0
+2024-04-29,2024-05-05,"North, West and Central Sutherland",Highland,S13002662,0,0
+2024-04-29,2024-05-05,Inverkeithing and Dalgety Bay,Fife,S13002623,0,0
+2024-04-29,2024-05-05,Milngavie,East Dunbartonshire,S13002562,0,0
+2024-04-29,2024-05-05,Livingston South,West Lothian,S13002823,0,0
+2024-04-29,2024-05-05,Renfrew South & Gallowhill,Renfrewshire,S13002751,0,0
+2024-04-29,2024-05-05,Sgire an Rubha,Western Isles - Eilean Siar,S13002604,0,0
+2024-04-29,2024-05-05,Dunblane and Bridge of Allan,Stirling,S13002809,0,0
+2024-04-29,2024-05-05,Musselburgh,East Lothian,S13002908,0,0
+2024-04-29,2024-05-05,Shettleston,South Lanarkshire,S13002659,0,0
+2024-04-29,2024-05-05,Shetland Central,Shetland Islands,S13002775,0,0
+2024-04-29,2024-05-05,"Houston, Crosslee & Linwood",Renfrewshire,S13002758,1,0
+2024-04-29,2024-05-05,Shettleston,Glasgow City,S13002659,0,0
+2024-04-29,2024-05-05,Johnstone South and Elderslie,Renfrewshire,S13003082,0,0
+2024-04-29,2024-05-05,Corstorphine/Murrayfield,City of Edinburgh,S13002588,0,0
+2024-04-29,2024-05-05,Cumbernauld North,North Lanarkshire,S13002713,1,0
+2024-04-29,2024-05-05,Girvan and South Carrick,South Ayrshire,S13002786,0,0
+2024-04-29,2024-05-05,Cumbernauld South,North Lanarkshire,S13002714,0,0
+2024-04-29,2024-05-05,Heldon and Laich,Moray,S13002700,0,0
+2024-04-29,2024-05-05,Dee and Glenkens,Dumfries and Galloway,S13002882,0,0
+2024-04-29,2024-05-05,Annandale South,Dumfries and Galloway,S13002542,0,0
+2024-04-29,2024-05-05,Almond,City of Edinburgh,S13002583,0,0
+2024-04-29,2024-05-05,Highland,Perth and Kinross,S13002741,0,0
+2024-04-29,2024-05-05,Kinross-shire,Perth and Kinross,S13002745,0,0
+2024-04-29,2024-05-05,"Stepps, Chryston and Muirhead",North Lanarkshire,S13003046,0,0
+2024-04-29,2024-05-05,Howe of Fife and Tay Coast,Fife,S13002634,0,0
+2024-04-29,2024-05-05,Newton Mearns North and Neilston,East Renfrewshire,S13002915,0,0
+2024-04-29,2024-05-05,Westhill and District,Aberdeenshire,S13002501,0,1
+2024-04-29,2024-05-05,Leaderdale and Melrose,Scottish Borders,S13002765,0,0
+2024-04-29,2024-05-05,Falkirk North,Falkirk,S13002614,0,0
+2024-04-29,2024-05-05,Renfrew North and Braehead,Renfrewshire,S13003075,0,0
+2024-04-29,2024-05-05,East Kilbride South,South Lanarkshire,S13002792,0,0
+2024-04-29,2024-05-05,Bridge of Don,Aberdeen City,S13002477,0,0
+2024-04-29,2024-05-05,Clackmannanshire South,Clackmannanshire,S13002530,0,0
+2024-04-29,2024-05-05,Irvine West,North Ayrshire,S13002704,0,0
+2024-04-29,2024-05-05,Leith,City of Edinburgh,S13002595,0,0
+2024-04-29,2024-05-05,Isle of Bute,Argyll and Bute,S13002523,1,1
+2024-04-29,2024-05-05,Calton,Glasgow City,S13002649,0,0
+2024-04-29,2024-05-05,Turriff and District,Aberdeenshire,S13002495,0,0
+2024-04-29,2024-05-05,Paisley North West,Renfrewshire,S13002753,0,0
+2024-04-29,2024-05-05,Kirkwall East,Orkney Islands,S13002732,0,0
+2024-04-29,2024-05-05,Ayr North,South Ayrshire,S13002781,0,0
+2024-04-29,2024-05-05,Bearsden North,East Dunbartonshire,S13002563,0,0
+2024-04-29,2024-05-05,Stirling East,Stirling,S13002812,0,0
+2024-04-29,2024-05-05,Bishopbriggs South,East Dunbartonshire,S13002833,0,0
+2024-04-29,2024-05-05,Castle Douglas and Crocketford,Dumfries and Galloway,S13002883,0,0
+2024-04-29,2024-05-05,An Taobh Siar agus Nis,Western Isles - Eilean Siar,S13002608,1,0
+2024-04-29,2024-05-05,Loch a Tuath,Western Isles - Eilean Siar,S13002607,1,0
+2024-04-29,2024-05-05,Inverness Millburn,Highland,S13002678,0,0
+2024-04-29,2024-05-05,Barraigh Bhatarsaigh Eirisgeigh Uibhist Deas,Western Isles - Eilean Siar,S13002600,0,0
+2024-04-29,2024-05-05,Leven,West Dunbartonshire,S13002815,0,0
+2024-04-29,2024-05-05,Leith Walk,City of Edinburgh,S13002594,0,0
+2024-04-29,2024-05-05,Galashiels and District,Scottish Borders,S13002763,0,0
+2024-04-29,2024-05-05,East Sutherland and Edderton,Highland,S13002666,1,1
+2024-04-29,2024-05-05,North Coast and Cumbraes,North Ayrshire,S13002711,1,0
+2024-04-29,2024-05-05,Kirkwall West and Orphir,Orkney Islands,S13002733,0,1
+2024-04-29,2024-05-05,Whitburn and Blackburn,West Lothian,S13002826,0,0
+2024-04-29,2024-05-05,"Tranent, Wallyford and Macmerry",East Lothian,S13002910,1,0
+2024-04-29,2024-05-05,Denny and Banknock,Falkirk,S13002611,0,0
+2024-04-29,2024-05-05,Inverclyde North,Inverclyde,S13002686,0,0
+2024-04-29,2024-05-05,Aird and Loch Ness,Highland,S13002674,0,0
+2024-04-29,2024-05-05,Caol and Mallaig,Highland,S13002673,0,1
+2024-04-29,2024-05-05,Cumbernauld East,North Lanarkshire,S13003045,0,0
+2024-04-29,2024-05-05,East End,Dundee City,S13002551,0,0
+2024-04-29,2024-05-05,Garscadden/Scotstounhill,Glasgow City,S13002653,0,0
+2024-04-29,2024-05-05,Cambuslang East,South Lanarkshire,S13002800,0,0
+2024-04-29,2024-05-05,Ayr West,South Ayrshire,S13002783,0,0
