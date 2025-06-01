@@ -330,7 +330,7 @@ const DashBoard = () => {
                                                 <Typography variant="body1">Negative Sentiment Rank</Typography>
                                             </Box>
                                             <Box sx={{ mb: 2 }}>
-                                                <Chip label={statusText} color={statusColor === 'yellow' ? undefined : statusColor} sx={{ fontSize: 18, bgcolor: statusColor === 'yellow' ? 'yellow' : undefined, color: statusColor === 'yellow' ? 'black' : undefined, px: 2, py: 1, fontWeight: 'bold', fontFamily: 'monospace', fontSize: 22 }} />
+                                                <Chip label={statusText} color={statusColor === 'yellow' ? undefined : statusColor} sx={{ bgcolor: statusColor === 'yellow' ? 'yellow' : undefined, color: statusColor === 'yellow' ? 'black' : undefined, px: 2, py: 1, fontWeight: 'bold', fontFamily: 'monospace', fontSize: 22 }} />
                                                 <Typography variant="body2" sx={{ mt: 1 }}>
                                                     {crimeRank >= 151 && 'This region is considered safe.'}
                                                     {crimeRank >= 76 && crimeRank <= 150 && 'This region is relatively safe.'}

@@ -531,7 +531,7 @@ const DisasterMap = () => {
                                                 return (
                                                     <ListItem
                                                         key={area.wardCode}
-                                                        button
+                                                        button={true}
                                                         onClick={() => {
                                                             if (areaOption) {
                                                                 flyToLocation(areaOption.longitude, areaOption.latitude, 9);
