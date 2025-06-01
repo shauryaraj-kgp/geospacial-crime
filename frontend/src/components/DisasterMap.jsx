@@ -3,7 +3,6 @@ import * as maplibregl from 'maplibre-gl';
 import { Map as MapGL, NavigationControl, ScaleControl, Popup, Source, Layer } from 'react-map-gl/maplibre';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import '../styles/DisasterMap.css';
-import regionalData from '../data/new_monthly_data.json';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
@@ -62,7 +61,24 @@ const DisasterMap = () => {
     const [popupInfo, setPopupInfo] = useState(null);
     const mapRef = useRef(null);
     const [tabIndex, setTabIndex] = useState(0);
-    const [geoLoading, setGeoLoading] = useState(false);
+    const [geoLoading, setGeoLoading] = useState(true);
+    const [regionalData, setRegionalData] = useState([]);
+    const [regionalLoaded, setRegionalLoaded] = useState(false);
+    const [geoLoaded, setGeoLoaded] = useState(false);
+
+    // Load regional data on mount
+    useEffect(() => {
+        fetch('/data/new_monthly_data.json')
+            .then(res => res.json())
+            .then(data => {
+                setRegionalData(data);
+                setRegionalLoaded(true);
+            })
+            .catch(err => {
+                console.error('Failed to load regionalData:', err);
+                setRegionalLoaded(true); // Avoid infinite loading
+            });
+    }, []);
 
     // Get all unique council areas from regional data
     const areaOptions = useMemo(() => {
@@ -81,20 +97,19 @@ const DisasterMap = () => {
 
         return Array.from(uniqueAreas.values())
             .sort((a, b) => a.label.localeCompare(b.label));
-    }, []);
+    }, [regionalData]);
 
     // Fetch GeoJSON file once
     useEffect(() => {
-        setGeoLoading(true);
         fetch('/data/scotland-geodata.json')
             .then((res) => res.json())
             .then((data) => {
                 setGeoData(data);
-                setGeoLoading(false);
+                setGeoLoaded(true);
             })
             .catch((err) => {
                 console.error('Failed to load geoData:', err);
-                setGeoLoading(false);
+                setGeoLoaded(true); // Avoid infinite loading
             });
     }, []);
 
@@ -117,7 +132,7 @@ const DisasterMap = () => {
             }
         }
         return map;
-    }, [scoreType, selectedYear, selectedMonth]);
+    }, [scoreType, selectedYear, selectedMonth, regionalData]);
 
     const getColor = (score) => {
         if (score == null || score < 0) return '#e0e0e0'; // Softer gray
@@ -322,15 +337,17 @@ const DisasterMap = () => {
         totalDetectedCrime = areaCrimeDetails['DETECTED CRIME'];
     }
 
-    // When date, scoreType, or area changes, show loading for a short time to indicate update
+    // Track loading state for both data sources
     useEffect(() => {
-        if (geoData) {
+        if (!regionalLoaded || !geoLoaded) {
             setGeoLoading(true);
-            // Simulate a short loading time for recalculation (e.g., 300ms)
-            const timeout = setTimeout(() => setGeoLoading(false), 300);
-            return () => clearTimeout(timeout);
+            return;
         }
-    }, [selectedYear, selectedMonth, scoreType, geoData]);
+        // If both loaded, show loading for recalculation triggers
+        setGeoLoading(true);
+        const timeout = setTimeout(() => setGeoLoading(false), 300);
+        return () => clearTimeout(timeout);
+    }, [regionalLoaded, geoLoaded, selectedYear, selectedMonth, scoreType, geoData]);
 
     return (
         <>

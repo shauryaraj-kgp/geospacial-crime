@@ -1,6 +1,4 @@
-import React, { useState, useMemo } from 'react';
-import regionalData from '../data/new_monthly_data.json';
-import daywiseData from '../data/new_monthly_data.json';
+import React, { useState, useMemo, useEffect } from 'react';
 import '../styles/DashBoard.css';
 
 import {
@@ -29,15 +27,18 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DateCalendar } from '@mui/x-date-pickers/DateCalendar';
 import dayjs from 'dayjs';
 
+// Update the loadRegionalData function to fetch from public/data
+const loadRegionalData = async () => {
+    const response = await fetch('/data/new_monthly_data.json');
+    return await response.json();
+};
 
-
-const allRegions = [...new Set(regionalData.map(entry => entry.source_location))].sort();
 const allYears = [2019, 2020, 2021, 2022, 2023, 2024];
 
-const getMonthlyCrimeData = (region, year) => {
+const getMonthlyCrimeData = (region, year, data) => {
     return Array.from({ length: 12 }, (_, i) => {
         const month = i + 1;
-        const entry = regionalData.find(
+        const entry = data.find(
             (d) => d.source_location === region && d.year === year && d.month === month
         );
         return {
@@ -51,7 +52,7 @@ const getMonthlyCrimeData = (region, year) => {
 const getDailyCrimeData = (data, region, year, month) => {
     const days = Array.from({ length: 30 }, (_, i) => i + 1);
     return days.map(day => {
-        const entry = daywiseData.find(
+        const entry = data.find(
             d =>
                 d.source_location === region &&
                 d.year === year &&
@@ -103,6 +104,7 @@ function getCrimeReasons(entry) {
 }
 
 const DashBoard = () => {
+    const [regionalData, setRegionalData] = useState([]);
     const [selectedRegion, setSelectedRegion] = useState(null);
     const [selectedYear, setSelectedYear] = useState(null);
     const [selectedMonth, setSelectedMonth] = useState(null);
@@ -110,20 +112,23 @@ const DashBoard = () => {
     const [calendarOpen, setCalendarOpen] = useState(false);
     const [tempDate, setTempDate] = useState(dayjs('2024-12-01'));
 
+    // Load data on mount
+    useEffect(() => {
+        loadRegionalData().then(setRegionalData);
+    }, []);
 
-
+    // Move allRegions inside component to use regionalData from state
+    const allRegions = useMemo(() => [...new Set(regionalData.map(entry => entry.source_location))].sort(), [regionalData]);
 
     // Monthly chart data, calculated only when region or year changes
     const monthlyChartData = useMemo(() => {
-        return getMonthlyCrimeData(selectedRegion, selectedYear);
-    }, [selectedRegion, selectedYear]);
-
+        return getMonthlyCrimeData(selectedRegion, selectedYear, regionalData);
+    }, [selectedRegion, selectedYear, regionalData]);
 
     // Daily chart data, calculated only when region, year, or month changes
     const dailyChartData = useMemo(() => {
-        return getDailyCrimeData(daywiseData, selectedRegion, selectedYear, selectedMonth);
-    }, [selectedRegion, selectedYear, selectedMonth]);
-
+        return getDailyCrimeData(regionalData, selectedRegion, selectedYear, selectedMonth);
+    }, [selectedRegion, selectedYear, selectedMonth, regionalData]);
 
     const handleSearchLocation = (query) => {
         if (!allRegions.includes(query)) {
@@ -131,7 +136,6 @@ const DashBoard = () => {
             return;
         }
     };
-
 
     return (
         <div className="dashboard-wrapper">
@@ -183,7 +187,6 @@ const DashBoard = () => {
                             )}
                         />
 
-
                         <Button
                             variant="contained"
                             onClick={() => setSelectedRegion(locationQuery)}
@@ -193,7 +196,6 @@ const DashBoard = () => {
                         </Button>
                     </Box>
                 </Paper>
-
 
                 {selectedRegion && locationQuery && (
                     <Box textAlign="center" sx={{ mb: 4 }}>
@@ -239,7 +241,6 @@ const DashBoard = () => {
                         </Button>
                     </DialogActions>
                 </Dialog>
-
 
                 {selectedRegion && locationQuery && selectedMonth && selectedYear &&
                     <Box className="dashboard-main" sx={{ display: 'flex', flexDirection: 'row', gap: 2 }}>
