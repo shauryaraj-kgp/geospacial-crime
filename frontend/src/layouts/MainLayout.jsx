@@ -60,10 +60,10 @@ export default function MainLayout() {
                     <ListItem disablePadding>
                         <ListItemButton
                             component="a"
-                            href="/pre-disaster"
+                            href="/report"
                             sx={{ justifyContent: 'center', py: 2 }}
                         >
-                            <ListItemIcon sx={{ minWidth: 0 }}><PreDisasterIcon /></ListItemIcon>
+                            <ListItemIcon sx={{ minWidth: 0 }}><ReportsIcon /></ListItemIcon>
                             <ListItemText primary="Pre-Disaster Data" sx={{ display: 'none' }} />
                         </ListItemButton>
                     </ListItem>
@@ -125,7 +125,8 @@ export default function MainLayout() {
                 sx={{
                     flexGrow: 1,
                     backgroundColor: 'rgb(240, 240, 240)',
-                    width: { sm: `calc(100% - ${drawerWidth}px)` }
+                    width: { sm: `calc(100% - ${drawerWidth}px)` },
+                    minHeight: '100vh'
                 }}
 
             >
