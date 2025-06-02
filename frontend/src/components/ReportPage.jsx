@@ -14,11 +14,6 @@ const REPORT_TYPES = [
     { value: 'overview', label: 'Scotland Overview', desc: 'Provides an overall summary of crime statistics and trends across Scotland for the selected period.' }
 ];
 
-const SEVERITY_LEVELS = [
-    { value: 1, label: 'Low', desc: 'Only show areas with low predicted severity.' },
-    { value: 2, label: 'Medium', desc: 'Show areas with medium or higher predicted severity.' },
-    { value: 3, label: 'High', desc: 'Only show areas with high predicted severity.' }
-];
 
 const LOADING_STEPS = [
     'Collecting historical data...',
@@ -27,7 +22,7 @@ const LOADING_STEPS = [
     'Generating summary...'
 ];
 
-function getFormSteps({ date, setDate, reportType, setReportType, severity, setSeverity, email, setEmail }) {
+function getFormSteps({ date, setDate, reportType, setReportType, email, setEmail }) {
     return [
         {
             label: 'Select Forecast Start Month',
@@ -89,48 +84,6 @@ function getFormSteps({ date, setDate, reportType, setReportType, severity, setS
             isValid: !!reportType
         },
         {
-            label: 'Set Severity Threshold',
-            content: (
-                <Box>
-                    <Typography variant="subtitle1" sx={{ mb: 1 }}>
-                        Severity Threshold controls which hotspots are included in the report:
-                    </Typography>
-                    <Stack direction={{ xs: 'column', sm: 'row' }} spacing={2} sx={{ overflow: 'hidden' }}>
-                        {SEVERITY_LEVELS.map(opt => (
-                            <Paper
-                                key={opt.value}
-                                elevation={severity === opt.value ? 6 : 1}
-                                sx={{
-                                    width: 240,
-                                    minWidth: 0,
-                                    p: 2,
-                                    border: severity === opt.value ? '2px solid #d32f2f' : '1px solid #e0e0e0',
-                                    boxShadow: severity === opt.value ? 4 : 1,
-                                    cursor: 'pointer',
-                                    transition: 'all 0.2s',
-                                    backgroundColor: severity === opt.value ? 'rgba(211, 47, 47, 0.08)' : 'white',
-                                    '&:hover': {
-                                        border: '2px solid #d32f2f',
-                                        backgroundColor: 'rgba(211, 47, 47, 0.04)'
-                                    },
-                                    display: 'flex',
-                                    flexDirection: 'column',
-                                    alignItems: 'flex-start',
-                                }}
-                                onClick={() => setSeverity(opt.value)}
-                            >
-                                <Typography variant="subtitle1" fontWeight={600} color={severity === opt.value ? 'error' : 'text.primary'}>
-                                    {opt.label}
-                                </Typography>
-                                <Typography variant="caption" color="text.secondary">{opt.desc}</Typography>
-                            </Paper>
-                        ))}
-                    </Stack>
-                </Box>
-            ),
-            isValid: !!severity
-        },
-        {
             label: 'Enter Email for Report Delivery (optional)',
             content: (
                 <TextField
@@ -151,7 +104,6 @@ function getFormSteps({ date, setDate, reportType, setReportType, severity, setS
 export default function ReportPage() {
     const [date, setDate] = useState(new Date(2024, 6)); // July 2024
     const [reportType, setReportType] = useState('hotspot');
-    const [severity, setSeverity] = useState(3);
     const [email, setEmail] = useState('');
     const [formStep, setFormStep] = useState(0);
     const [loading, setLoading] = useState(false);
@@ -162,7 +114,7 @@ export default function ReportPage() {
     const [summary, setSummary] = useState('');
     const [error, setError] = useState(null);
 
-    const formSteps = getFormSteps({ date, setDate, reportType, setReportType, severity, setSeverity, email, setEmail });
+    const formSteps = getFormSteps({ date, setDate, reportType, setReportType, email, setEmail });
 
     // Progress for form and loading
     const formProgress = Math.round((formStep / formSteps.length) * 100);
@@ -217,7 +169,6 @@ export default function ReportPage() {
         setSnackbarOpen(false);
         setDate(new Date(2024, 6));
         setReportType('hotspot');
-        setSeverity(2);
         setEmail('');
     };
 

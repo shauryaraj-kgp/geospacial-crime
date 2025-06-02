@@ -9,7 +9,6 @@ import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Autocomplete } from '@mui/material';
 import { Tabs, Tab } from '@mui/material';
 import { Backdrop, CircularProgress } from '@mui/material';
-
 import {
     Box,
     TextField,
@@ -35,12 +34,80 @@ import {
     Download as DownloadIcon,
     Share as ShareIcon,
     Warning as WarningIcon,
-    Mood as MoodIcon
+    Mood as MoodIcon,
+    SentimentVeryDissatisfied as AngryIcon
 } from '@mui/icons-material';
+import {
+    fetchAllRegions,
+    fetchCrimeTotals,
+    fetchSentimentTotals,
+    fetchCrimeTotal,
+    fetchSentimentTotal,
+    fetchCrimeReasons,
+    fetchWardMappings,
+    fetchWardLatLon
+} from '../api';
 
 const metaFields = [
     'source_location', 'COUNCIL NAME', 'WARD CODE', 'Population_Census_2022-03-20', 'Area', 'longitude', 'latitude', 'year', 'month', 'DETECTED CRIME', 'neg_ratio'
 ];
+
+// Utility functions for data calculations
+const DataUtils = {
+    getFilteredData: (data, wardCode, year, month) => {
+        return data.filter(row =>
+            row['WARD CODE'] === wardCode &&
+            row.year === year &&
+            row.month === month
+        );
+    },
+
+    getTotalMetric: (data, wardCode, year, month, metric) => {
+        const relevantRows = DataUtils.getFilteredData(data, wardCode, year, month);
+        return relevantRows.reduce((total, row) =>
+            total + (typeof row[metric] === 'number' ? row[metric] : 0), 0);
+    },
+
+    getRegionRanks: (data, wardCode, year, month) => {
+        // Get all unique ward codes
+        const uniqueWards = [...new Set(data.map(entry => entry['WARD CODE']))];
+
+        // Calculate totals for each ward
+        const wardTotals = uniqueWards.map(ward => ({
+            ward: ward,
+            totalCrime: DataUtils.getTotalMetric(data, ward, year, month, 'DETECTED CRIME'),
+            totalSentiment: DataUtils.getTotalMetric(data, ward, year, month, 'neg_ratio')
+        }));
+
+        // Sort by totals
+        const crimeRanked = [...wardTotals].sort((a, b) => b.totalCrime - a.totalCrime);
+        const sentimentRanked = [...wardTotals].sort((a, b) => b.totalSentiment - a.totalSentiment);
+
+        return {
+            crimeRank: crimeRanked.findIndex(d => d.ward === wardCode) + 1,
+            sentimentRank: sentimentRanked.findIndex(d => d.ward === wardCode) + 1,
+            totalRegions: uniqueWards.length,
+            totalCrime: crimeRanked.find(d => d.ward === wardCode)?.totalCrime || 0,
+            totalSentiment: sentimentRanked.find(d => d.ward === wardCode)?.totalSentiment || 0
+        };
+    },
+
+    getStatus: (rank) => {
+        if (rank <= 5) {
+            return { color: 'success', text: 'Low' };
+        } else if (rank <= 10) {
+            return { color: 'warning', text: 'Medium' };
+        } else {
+            return { color: 'error', text: 'High' };
+        }
+    },
+
+    getCrimeReasons: (data, wardCode, year, month) => {
+        const relevantData = DataUtils.getFilteredData(data, wardCode, year, month);
+        const reasons = relevantData.map(row => row['DETECTED CRIME'] > 0 ? row['DETECTED CRIME'] : 0).join(', ');
+        return reasons;
+    }
+};
 
 const DisasterMap = () => {
     const [viewState, setViewState] = useState({
@@ -52,7 +119,7 @@ const DisasterMap = () => {
         padding: { top: 0, bottom: 0, left: 0, right: 0 }
     });
     const [searchQuery, setSearchQuery] = useState('');
-    const [selectedArea, setSelectedArea] = useState(null);
+    const [selectedWardCode, setSelectedWardCode] = useState(null);
     const [scoreType, setScoreType] = useState('crimeScore');
     const [selectedYear, setSelectedYear] = useState(2024);
     const [selectedMonth, setSelectedMonth] = useState(12);
@@ -62,42 +129,36 @@ const DisasterMap = () => {
     const mapRef = useRef(null);
     const [tabIndex, setTabIndex] = useState(0);
     const [geoLoading, setGeoLoading] = useState(true);
-    const [regionalData, setRegionalData] = useState([]);
-    const [regionalLoaded, setRegionalLoaded] = useState(false);
-    const [geoLoaded, setGeoLoaded] = useState(false);
+    const [allWardCodes, setAllWardCodes] = useState([]);
+    const [crimeTotals, setCrimeTotals] = useState({});
+    const [sentimentTotals, setSentimentTotals] = useState({});
+    const [wardOptions, setWardOptions] = useState([]);
+    const [wardCrimeReasons, setWardCrimeReasons] = useState([]);
+    const [wardCrimeTotal, setWardCrimeTotal] = useState(null);
+    const [wardSentimentTotal, setWardSentimentTotal] = useState(null);
+    const [wardMappings, setWardMappings] = useState([]);
+    const [allSourceLocations, setAllSourceLocations] = useState([]);
+    const [selectedSourceLocation, setSelectedSourceLocation] = useState(null);
+    const [backendReady, setBackendReady] = useState(false);
+    const [selectedLatLon, setSelectedLatLon] = useState(null);
 
-    // Load regional data on mount
+    // Fetch all regions and totals on mount or when year/month changes
     useEffect(() => {
-        fetch('/data/new_monthly_data.json')
-            .then(res => res.json())
-            .then(data => {
-                setRegionalData(data);
-                setRegionalLoaded(true);
-            })
-            .catch(err => {
-                console.error('Failed to load regionalData:', err);
-                setRegionalLoaded(true); // Avoid infinite loading
-            });
-    }, []);
-
-    // Get all unique council areas from regional data
-    const areaOptions = useMemo(() => {
-        const uniqueAreas = new Map();
-
-        regionalData.forEach(entry => {
-            if (!uniqueAreas.has(entry['source_location'])) {
-                uniqueAreas.set(entry['source_location'], {
-                    label: entry['source_location'],
-                    wardCode: entry['WARD CODE'],
-                    longitude: entry.longitude,
-                    latitude: entry.latitude
-                });
-            }
-        });
-
-        return Array.from(uniqueAreas.values())
-            .sort((a, b) => a.label.localeCompare(b.label));
-    }, [regionalData]);
+        setGeoLoading(true);
+        Promise.all([
+            fetchAllRegions(),
+            fetchCrimeTotals(selectedYear, selectedMonth),
+            fetchSentimentTotals(selectedYear, selectedMonth)
+        ]).then(([regions, crimeTotals, sentimentTotals]) => {
+            setAllWardCodes(regions);
+            setCrimeTotals(crimeTotals);
+            setSentimentTotals(sentimentTotals);
+            setWardOptions(regions.map(region => ({
+                label: region,
+                value: region
+            })));
+        }).finally(() => setGeoLoading(false));
+    }, [selectedYear, selectedMonth]);
 
     // Fetch GeoJSON file once
     useEffect(() => {
@@ -105,78 +166,110 @@ const DisasterMap = () => {
             .then((res) => res.json())
             .then((data) => {
                 setGeoData(data);
-                setGeoLoaded(true);
             })
             .catch((err) => {
                 console.error('Failed to load geoData:', err);
-                setGeoLoaded(true); // Avoid infinite loading
             });
     }, []);
 
-    // Precompute the scores for the selected year/month
-    const regionalScoreMap = useMemo(() => {
-        const map = {};
-        for (const entry of regionalData) {
-            if (
-                entry.year === selectedYear &&
-                entry.month === selectedMonth &&
-                entry['WARD CODE']
-            ) {
-                const key = entry['WARD CODE'];
-                const value =
-                    scoreType === 'crimeScore'
-                        ? parseFloat(entry['DETECTED CRIME'])
-                        : parseFloat(entry['neg_ratio']);
+    // Fetch area crime/sentiment/crime reasons when selectedWardCode changes
+    useEffect(() => {
+        if (!selectedWardCode) return;
+        setGeoLoading(true);
+        Promise.all([
+            fetchCrimeTotal(selectedYear, selectedMonth, selectedWardCode),
+            fetchSentimentTotal(selectedYear, selectedMonth, selectedWardCode),
+            fetchCrimeReasons(selectedYear, selectedMonth, selectedWardCode)
+        ]).then(([crimeTotal, sentimentTotal, crimeReasons]) => {
+            setWardCrimeTotal(crimeTotal.total_detected_crime);
+            setWardSentimentTotal(sentimentTotal.average_sentiment);
+            setWardCrimeReasons(Object.entries(crimeReasons));
+        }).finally(() => setGeoLoading(false));
+    }, [selectedWardCode, selectedYear, selectedMonth]);
 
-                if (!isNaN(value)) map[key] = value;
-            }
-        }
-        return map;
-    }, [scoreType, selectedYear, selectedMonth, regionalData]);
+    useEffect(() => {
+        fetchWardMappings()
+            .then((mappings) => {
+                setWardMappings(mappings);
+                setAllSourceLocations(mappings.map(m => m.source_location));
+                setBackendReady(true);
+            })
+            .catch(() => setAllSourceLocations([]));
+    }, []);
 
     const getColor = (score) => {
-        if (score == null || score < 0) return '#e0e0e0'; // Softer gray
+        let r, g, b;
+        if (score == null || isNaN(score)) return '#e0e0e0';
+        const values = Object.values(regionalScoreMap).filter(v => typeof v === 'number');
+        if (values.length === 0) return '#e0e0e0';
+        let t;
 
         if (scoreType === 'crimeScore') {
-            const thresholds = [0, 1, 2, 4, 6, 7, 10, 13, 17, 23, 248];
-            let index = thresholds.findIndex((t) => score <= t);
-            if (index === -1) index = thresholds.length - 1;
-            const percent = index / (thresholds.length - 1);
-
-            // Balanced color palette
-            if (percent < 0.2) return '#33cc33'; // Medium green
-            if (percent < 0.4) return '#99cc33'; // Medium lime
-            if (percent < 0.6) return '#ffcc00'; // Medium yellow
-            if (percent < 0.8) return '#ff9933'; // Medium orange
-            return '#ff3333'; // Medium red
+            if (score <= 30) {
+                r = 0; g = 204; b = 51;
+                return `rgb(${r},${g},${b})`;
+            } else if (score >= 70) {
+                r = 255; g = 0; b = 51;
+                return `rgb(${r},${g},${b})`;
+            } else {
+                t = (score - 30) / 40;
+            }
+        } else {
+            // sentimentScore: -2 (red) to -0.5 (green)
+            if (score >= -0.5) {
+                r = 0; g = 204; b = 51;
+                return `rgb(${r},${g},${b})`;
+            } else if (score <= -2) {
+                r = 255; g = 0; b = 51;
+                return `rgb(${r},${g},${b})`;
+            } else {
+                t = (score + 2) / 1.5;
+            }
         }
-
-        if (scoreType === 'sentimentScore') {
-            const clamped = Math.max(0, Math.min(1, score));
-
-            // Balanced color palette for sentiment
-            if (clamped < 0.2) return '#33cc33'; // Medium green
-            if (clamped < 0.4) return '#99cc33'; // Medium lime
-            if (clamped < 0.6) return '#ffcc00'; // Medium yellow
-            if (clamped < 0.8) return '#ff9933'; // Medium orange
-            return '#ff3333'; // Medium red
+        // Four-color gradient: green (0) -> yellow (0.33) -> orange (0.66) -> red (1)
+        if (t <= 0.33) {
+            const localT = t / 0.33;
+            r = Math.round(0 + (255 - 0) * localT);
+            g = 204;
+            b = 51;
+        } else if (t <= 0.66) {
+            const localT = (t - 0.33) / 0.33;
+            r = 255;
+            g = Math.round(204 - (204 - 153) * localT);
+            b = 51;
+        } else {
+            const localT = (t - 0.66) / 0.34;
+            r = 255;
+            g = Math.round(153 - 153 * localT);
+            b = 51;
         }
-
-        return '#e0e0e0'; // Softer gray
+        return `rgb(${r},${g},${b})`;
     };
 
-    // Create layer style
+    const regionalScoreMap = useMemo(() => {
+        const map = {};
+        if (scoreType === 'crimeScore') {
+            Object.entries(crimeTotals).forEach(([ward_code, score]) => {
+                const mapping = wardMappings.find(m => m.ward_code === ward_code);
+                if (mapping) map[mapping.source_location] = score;
+            });
+        } else {
+            Object.entries(sentimentTotals).forEach(([ward_code, score]) => {
+                const mapping = wardMappings.find(m => m.ward_code === ward_code);
+                if (mapping) map[mapping.source_location] = score;
+            });
+        }
+        return map;
+    }, [scoreType, crimeTotals, sentimentTotals, wardMappings]);
+
     const layerStyle = useMemo(() => ({
         id: 'scotland-regions-layer',
         type: 'fill',
         paint: {
             'fill-color': [
                 'match',
-                ['get', 'WD13CD'],
-                ...Object.entries(regionalScoreMap).map(([id, score]) => [
-                    id,
-                    getColor(score)
-                ]).flat(),
+                ['get', 'WD13NM'],
+                ...Object.entries(regionalScoreMap).map(([id, score]) => [id, getColor(score)]).flat(),
                 '#e0e0e0'
             ],
             'fill-opacity': 0.5,
@@ -184,30 +277,24 @@ const DisasterMap = () => {
         }
     }), [regionalScoreMap]);
 
-    // Handle click on map
     const onClick = (event) => {
         if (event.features && event.features.length > 0) {
             const feature = event.features[0];
             const properties = feature.properties || {};
-            const wardCode = properties.WD13CD;
             const regionName = properties.WD13NM;
-            const score = regionalScoreMap[wardCode];
-
             if (event.lngLat) {
                 setPopupInfo({
                     longitude: event.lngLat.lng,
                     latitude: event.lngLat.lat,
                     label: regionName,
-                    value: score
+                    value: regionalScoreMap[regionName]
                 });
             }
         } else {
-            // Close popup when clicking anywhere else on the map
             setPopupInfo(null);
         }
     };
 
-    // Function to smoothly fly to a location
     const flyToLocation = (longitude, latitude, zoom) => {
         const map = mapRef.current?.getMap?.();
         if (map) {
@@ -219,44 +306,32 @@ const DisasterMap = () => {
                 essential: true
             });
         } else {
-            setViewState(vs => ({
-                ...vs,
-                longitude,
-                latitude,
-                zoom
-            }));
+            setViewState(vs => ({ ...vs, longitude, latitude, zoom }));
         }
     };
 
-    // Handle area selection from search
-    const handleAreaSelect = (event, newValue) => {
-        setSelectedArea(newValue);
-        if (newValue) {
-            setTabIndex(1); // Switch to Area Details tab
-            flyToLocation(newValue.longitude, newValue.latitude, 9);
-
-            const score = regionalData.find(
-                entry =>
-                    entry['WARD CODE'] === newValue.wardCode &&
-                    entry.year === selectedYear &&
-                    entry.month === selectedMonth
-            );
-
-            if (score) {
-                const value = scoreType === 'crimeScore'
-                    ? parseFloat(score['DETECTED CRIME'])
-                    : parseFloat(score['neg_ratio']);
-
+    const handleSelectLocation = async (sourceLocation) => {
+        setSelectedSourceLocation(sourceLocation);
+        const mapping = wardMappings.find(m => m.source_location === sourceLocation);
+        if (mapping) {
+            setSelectedWardCode(mapping.ward_code);
+            try {
+                const { latitude, longitude } = await fetchWardLatLon(mapping.ward_code);
+                setSelectedLatLon({ latitude, longitude });
+                flyToLocation(longitude, latitude, 10);
                 setPopupInfo({
-                    longitude: newValue.longitude,
-                    latitude: newValue.latitude,
-                    label: newValue.label,
-                    value: value
+                    longitude,
+                    latitude,
+                    label: sourceLocation,
+                    value: regionalScoreMap[sourceLocation]
                 });
+            } catch (e) {
+                setSelectedLatLon(null);
             }
+            setTabIndex(1);
         } else {
-            setTabIndex(0); // Switch back to Top 5 Areas tab
-            setPopupInfo(null);
+            setSelectedWardCode(null);
+            setSelectedLatLon(null);
         }
     };
 
@@ -266,31 +341,16 @@ const DisasterMap = () => {
         }
     };
 
-    // Get top 5 areas based on current score type
     const topAreas = useMemo(() => {
-        const areaScores = [];
-        for (const entry of regionalData) {
-            if (entry.year === selectedYear && entry.month === selectedMonth) {
-                const score = scoreType === 'crimeScore'
-                    ? parseFloat(entry['DETECTED CRIME'])
-                    : parseFloat(entry['neg_ratio']);
-                if (!isNaN(score)) {
-                    // Find the corresponding GeoJSON feature to get the area name
-                    const feature = geoData?.features?.find(f => f.properties.WD13CD === entry['WARD CODE']);
-                    areaScores.push({
-                        name: entry['source_location'] || 'Unknown Area',
-                        score: score,
-                        wardCode: entry['WARD CODE']
-                    });
-                }
-            }
-        }
+        const areaScores = Object.entries(regionalScoreMap).map(([region, score]) => ({
+            name: region,
+            score: score
+        }));
         return areaScores
-            .sort((a, b) => b.score - a.score)
+            .sort((a, b) => scoreType === 'sentimentScore' ? a.score - b.score : b.score - a.score)
             .slice(0, 5);
-    }, [selectedYear, selectedMonth, scoreType, regionalData, geoData]);
+    }, [regionalScoreMap, scoreType]);
 
-    // Handle date change
     const handleDateChange = (newDate) => {
         if (newDate) {
             const year = newDate.getFullYear();
@@ -301,85 +361,40 @@ const DisasterMap = () => {
         }
     };
 
-    // Check if date is in valid range
     const isDateInRange = (date) => {
-        const start = new Date(2019, 3); // April 2019
-        const end = new Date(2024, 11);  // December 2024
+        const start = new Date(2019, 3);
+        const end = new Date(2024, 11);
         return date >= start && date <= end;
     };
 
-    // Switch to Top 5 Areas tab when selectedArea becomes null
-    useEffect(() => {
-        if (selectedArea === null) {
-            setTabIndex(0);
-        }
-    }, [selectedArea]);
-
-    // Get area crime details for selected area/month/year
-    let areaCrimeDetails = null;
-    if (selectedArea) {
-        areaCrimeDetails = regionalData.find(entry =>
-            entry['WARD CODE'] === selectedArea.wardCode &&
-            entry.year === selectedYear &&
-            entry.month === selectedMonth
-        );
-    }
-    let topCrimes = [];
-    let totalDetectedCrime = null;
-    if (areaCrimeDetails) {
-        // Get all crime fields (exclude meta fields)
-        const crimes = Object.entries(areaCrimeDetails)
-            .filter(([key, value]) => !metaFields.includes(key) && typeof value === 'number' && value > 0)
-            .map(([key, value]) => ({ crime: key, value }));
-        // Sort by value descending
-        crimes.sort((a, b) => b.value - a.value);
-        topCrimes = crimes.slice(0, 5);
-        totalDetectedCrime = areaCrimeDetails['DETECTED CRIME'];
-    }
-
-    // Track loading state for both data sources
-    useEffect(() => {
-        if (!regionalLoaded || !geoLoaded) {
-            setGeoLoading(true);
-            return;
-        }
-        // If both loaded, show loading for recalculation triggers
-        setGeoLoading(true);
-        const timeout = setTimeout(() => setGeoLoading(false), 300);
-        return () => clearTimeout(timeout);
-    }, [regionalLoaded, geoLoaded, selectedYear, selectedMonth, scoreType, geoData]);
+    const getSourceLocation = (ward_code) => {
+        const mapping = wardMappings.find(m => m.ward_code === ward_code);
+        return mapping ? mapping.source_location : ward_code;
+    };
 
     return (
         <>
-            {/* Main content */}
-            <Box sx={{ height: 'calc(100vh - 32px)', display: 'flex', flexDirection: 'column' }}>
-                {/* Header */}
-                <Box sx={{ p: 2 }}>
-                    <Typography variant="h4" marginBottom={1}>Interactive Disaster Map</Typography>
-                    <Typography variant="body1" marginBottom={1}>description.....</Typography>
-                </Box>
-
-                {/* Main content */}
+            <Box sx={{ minHeight: 'calc(100vh - 32px)', display: 'flex', flexDirection: 'column', padding: '20px' }}>
+                <header className="map-header">
+                    <h1>
+                        Scotland Crime & Sentiment Heatmap
+                    </h1>
+                    <p>
+                        Explore crime rates and public sentiment across Scotland's wards. Use the search bar or click on the map to select an area. Switch between Crime Score and Sentiment Score to see different heatmaps. The color scale runs from green (low crime/least negative sentiment) through yellow and orange to red (high crime/most negative sentiment). Top 5 areas are highlighted on the right. Zoom in for more detail and click on a region for statistics and trends.
+                    </p>
+                </header>
                 <Box sx={{ display: 'flex', flex: 1, gap: 2, px: 2 }}>
-                    {/* Left side - Map */}
                     <Box sx={{ flex: 0.7, position: 'relative' }}>
                         <Box
                             component="form"
-                            sx={{
-                                display: 'flex',
-                                gap: 2,
-                                width: '100%',
-                                alignItems: 'center',
-                                mb: 2
-                            }}
+                            sx={{ display: 'flex', gap: 2, width: '100%', alignItems: 'center', mb: 2 }}
                             onSubmit={(e) => e.preventDefault()}
                         >
                             <Autocomplete
                                 fullWidth
-                                options={areaOptions}
-                                value={selectedArea}
-                                onChange={handleAreaSelect}
-                                isOptionEqualToValue={(option, value) => option.wardCode === value?.wardCode}
+                                options={allSourceLocations}
+                                value={selectedSourceLocation}
+                                onChange={(_, newValue) => handleSelectLocation(newValue)}
                                 renderInput={(params) => (
                                     <TextField
                                         {...params}
@@ -397,46 +412,19 @@ const DisasterMap = () => {
                                     />
                                 )}
                             />
-
                             <Stack direction="row" spacing={1}>
-                                <IconButton
-                                    size="small"
-                                    onClick={() => {
-                                        setSelectedArea(null);
-                                        flyToLocation(-4.2026, 57.4907, 5);
-                                    }}
-                                >
-                                    <RefreshIcon />
-                                </IconButton>
+                                <IconButton size="small" onClick={() => { setSelectedWardCode(null); flyToLocation(-4.2026, 57.4907, 5); }}><RefreshIcon /></IconButton>
                                 <IconButton size="small"><MyLocationIcon /></IconButton>
                                 <IconButton size="small"><InfoIcon /></IconButton>
                                 <IconButton size="small"><DownloadIcon /></IconButton>
                                 <IconButton size="small"><ShareIcon /></IconButton>
                             </Stack>
                         </Box>
-
                         <Box sx={{ position: 'relative', width: '100%', height: 'calc(100% - 52px)' }}>
-                            {/* Loading overlay for map only */}
                             {geoLoading && (
-                                <Box
-                                    sx={{
-                                        position: 'absolute',
-                                        top: 0,
-                                        left: 0,
-                                        width: '100%',
-                                        height: '100%',
-                                        bgcolor: 'rgba(255,255,255,0.7)',
-                                        zIndex: 10,
-                                        display: 'flex',
-                                        flexDirection: 'column',
-                                        alignItems: 'center',
-                                        justifyContent: 'center',
-                                    }}
-                                >
+                                <Box sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', bgcolor: 'rgba(255,255,255,0.7)', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                                     <CircularProgress color="primary" />
-                                    <Typography variant="subtitle1" sx={{ mt: 2, color: 'text.secondary' }}>
-                                        Loading...
-                                    </Typography>
+                                    <Typography variant="subtitle1" sx={{ mt: 2, color: 'text.secondary' }}>Loading...</Typography>
                                 </Box>
                             )}
                             <MapGL
@@ -448,17 +436,15 @@ const DisasterMap = () => {
                                 mapStyle="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
                                 interactiveLayerIds={['scotland-regions-layer']}
                                 onClick={onClick}
-                                cursor={selectedArea ? 'pointer' : 'default'}
+                                cursor={selectedWardCode ? 'pointer' : 'default'}
                             >
                                 <NavigationControl position="bottom-right" />
                                 <ScaleControl position="bottom-left" />
-
                                 {geoData && (
                                     <Source type="geojson" data={geoData}>
                                         <Layer {...layerStyle} />
                                     </Source>
                                 )}
-
                                 {popupInfo && (
                                     <Popup
                                         longitude={popupInfo.longitude}
@@ -473,39 +459,15 @@ const DisasterMap = () => {
                                         </div>
                                     </Popup>
                                 )}
-
-                                {/* Toggle Button */}
-                                <Box
-                                    sx={{
-                                        position: 'absolute',
-                                        top: 10,
-                                        left: 10,
-                                        zIndex: 1,
-                                        backgroundColor: 'white',
-                                        borderRadius: 1,
-                                        boxShadow: 1,
-                                        p: 0.5
-                                    }}
-                                >
-                                    <ToggleButtonGroup
-                                        value={scoreType}
-                                        exclusive
-                                        onChange={handleScoreTypeChange}
-                                        size="small"
-                                    >
-                                        <ToggleButton value="crimeScore">
-                                            Crime Score
-                                        </ToggleButton>
-                                        <ToggleButton value="sentimentScore">
-                                            Sentiment Score
-                                        </ToggleButton>
+                                <Box sx={{ position: 'absolute', top: 10, left: 10, zIndex: 1, backgroundColor: 'white', borderRadius: 1, boxShadow: 1, p: 0.5 }}>
+                                    <ToggleButtonGroup value={scoreType} exclusive onChange={handleScoreTypeChange} size="small">
+                                        <ToggleButton value="crimeScore">Crime Score</ToggleButton>
+                                        <ToggleButton value="sentimentScore">Sentiment Score</ToggleButton>
                                     </ToggleButtonGroup>
                                 </Box>
                             </MapGL>
                         </Box>
                     </Box>
-
-                    {/* Right side - Controls and Stats */}
                     <Box sx={{ flex: 0.3 }}>
                         <Card sx={{ height: '100%', overflow: 'auto' }}>
                             <CardContent>
@@ -513,7 +475,6 @@ const DisasterMap = () => {
                                     <Tab label="Top Areas" />
                                     <Tab label="Area Details" />
                                 </Tabs>
-
                                 {tabIndex === 0 && (
                                     <>
                                         <Box sx={{ mb: 2 }}>
@@ -542,66 +503,44 @@ const DisasterMap = () => {
                                             Top 5 Areas - {scoreType === 'crimeScore' ? 'Highest Crime Rate' : 'Most Negative Sentiment'}
                                         </Typography>
                                         <List dense>
-                                            {topAreas.map((area, index) => {
-                                                // Find coordinates for this area
-                                                const areaOption = areaOptions.find(opt => opt.wardCode === area.wardCode);
-                                                return (
-                                                    <ListItem
-                                                        key={area.wardCode}
-                                                        button={true}
-                                                        onClick={() => {
-                                                            if (areaOption) {
-                                                                flyToLocation(areaOption.longitude, areaOption.latitude, 9);
-                                                                setPopupInfo({
-                                                                    longitude: areaOption.longitude,
-                                                                    latitude: areaOption.latitude,
-                                                                    label: area.name,
-                                                                    value: area.score
-                                                                });
-                                                                setSelectedArea(areaOption);
-                                                                setTabIndex(1);
-                                                            }
-                                                        }}
-                                                        sx={{
-                                                            backgroundColor: index === 0 ? 'rgba(255, 0, 0, 0.1)' : 'transparent',
-                                                            borderRadius: 1,
-                                                            mb: 0.5,
-                                                            cursor: areaOption ? 'pointer' : 'default'
-                                                        }}
-                                                    >
-                                                        <ListItemText
-                                                            primary={`${index + 1}. ${area.name}`}
-                                                            secondary={`${scoreType === 'crimeScore' ? 'Crime Rate' : 'Negative Ratio'}: ${area.score.toFixed(2)}`}
-                                                        />
-                                                        {index === 0 && (
-                                                            <Box component="span" sx={{ ml: 1 }}>
-                                                                {scoreType === 'crimeScore' ?
-                                                                    <WarningIcon color="error" /> :
-                                                                    <MoodIcon sx={{ color: 'orange' }} />
-                                                                }
-                                                            </Box>
-                                                        )}
-                                                    </ListItem>
-                                                );
-                                            })}
+                                            {topAreas.map((area, index) => (
+                                                <ListItem
+                                                    key={area.name}
+                                                    button={true}
+                                                    onClick={() => {
+                                                        handleSelectLocation(area.name);
+                                                        setTabIndex(1);
+                                                    }}
+                                                    sx={{ backgroundColor: index === 0 ? 'rgba(255, 0, 0, 0.1)' : 'transparent', borderRadius: 1, mb: 0.5, cursor: 'pointer' }}
+                                                >
+                                                    <ListItemText
+                                                        primary={`${index + 1}. ${getSourceLocation(area.name)}`}
+                                                        secondary={`${scoreType === 'crimeScore' ? 'Crime Rate' : 'Negative Ratio'}: ${area.score.toFixed(2)}`}
+                                                    />
+                                                    {index === 0 && (
+                                                        <Box component="span" sx={{ ml: 1 }}>
+                                                            {scoreType === 'crimeScore' ? <WarningIcon color="error" /> : scoreType === 'sentimentScore' ? <AngryIcon sx={{ color: 'red' }} /> : <MoodIcon sx={{ color: 'orange' }} />}
+                                                        </Box>
+                                                    )}
+                                                </ListItem>
+                                            ))}
                                         </List>
                                     </>
                                 )}
-
-                                {tabIndex === 1 && selectedArea && (
+                                {tabIndex === 1 && selectedWardCode && (
                                     <>
                                         <Typography variant="h6" gutterBottom>
-                                            {selectedArea.label} - {selectedMonth}/{selectedYear}
+                                            {getSourceLocation(selectedWardCode)} - {selectedMonth}/{selectedYear}
                                         </Typography>
                                         <Typography variant="subtitle2" gutterBottom>
                                             Top Crimes
                                         </Typography>
                                         <List dense>
-                                            {topCrimes.length > 0 ? topCrimes.map((crime, idx) => (
-                                                <ListItem key={crime.crime}>
+                                            {wardCrimeReasons.length > 0 ? wardCrimeReasons.slice(0, 5).map(([crime, value], idx) => (
+                                                <ListItem key={crime}>
                                                     <ListItemText
-                                                        primary={`${idx + 1}. ${crime.crime}`}
-                                                        secondary={`Incidents: ${crime.value}`}
+                                                        primary={`${idx + 1}. ${crime}`}
+                                                        secondary={`Incidents: ${value}`}
                                                     />
                                                 </ListItem>
                                             )) : (
@@ -615,7 +554,7 @@ const DisasterMap = () => {
                                             Total Detected Crime
                                         </Typography>
                                         <Typography variant="h5" color="error" gutterBottom>
-                                            {totalDetectedCrime !== null ? totalDetectedCrime : 'N/A'}
+                                            {wardCrimeTotal !== null ? wardCrimeTotal : 'N/A'}
                                         </Typography>
                                     </>
                                 )}
