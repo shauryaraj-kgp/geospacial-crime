@@ -6,7 +6,10 @@ import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Map as MapIcon, Assessment as AssessmentIcon, Email as EmailIcon, Warning as WarningIcon } from '@mui/icons-material';
-import { fetchHotspotSummary } from '../api';
+import { Map as MapGL, NavigationControl, Popup, Marker } from 'react-map-gl/maplibre';
+import * as maplibregl from 'maplibre-gl';
+import 'maplibre-gl/dist/maplibre-gl.css';
+import { fetchHotspotSummary, fetchWardLatLon } from '../api';
 
 const REPORT_TYPES = [
     { value: 'hotspot', label: 'Hotspot Forecast', desc: 'Predicts the most likely crime hotspots for the selected week.' },
@@ -25,17 +28,25 @@ const LOADING_STEPS = [
 function getFormSteps({ date, setDate, reportType, setReportType, email, setEmail }) {
     return [
         {
-            label: 'Select Forecast Start Month',
+            label: 'Select Forecast Start Date',
             content: (
                 <LocalizationProvider dateAdapter={AdapterDateFns}>
                     <DatePicker
-                        label="Forecast Start Month"
-                        views={['year', 'month']}
+                        label="Forecast Start Date"
+                        views={['year', 'month', 'day']}
                         value={date}
                         onChange={val => setDate(val)}
                         minDate={new Date(2019, 3)}
                         maxDate={new Date(2024, 11)}
-                        slotProps={{ textField: { fullWidth: true } }}
+                        slotProps={{
+                            textField: {
+                                fullWidth: true,
+                                inputProps: {
+                                    placeholder: 'DD/MM/YYYY'
+                                }
+                            }
+                        }}
+                        format="dd/MM/yyyy"
                     />
                 </LocalizationProvider>
             ),
@@ -102,7 +113,7 @@ function getFormSteps({ date, setDate, reportType, setReportType, email, setEmai
 }
 
 export default function ReportPage() {
-    const [date, setDate] = useState(new Date(2024, 6)); // July 2024
+    const [date, setDate] = useState(new Date(2024, 6, 29)); // July 29, 2024
     const [reportType, setReportType] = useState('hotspot');
     const [email, setEmail] = useState('');
     const [formStep, setFormStep] = useState(0);
@@ -113,6 +124,15 @@ export default function ReportPage() {
     const [hotspots, setHotspots] = useState([]);
     const [summary, setSummary] = useState('');
     const [error, setError] = useState(null);
+    const [hotspotLocations, setHotspotLocations] = useState([]); // [{ward, council, lat, lon}]
+    const [popupInfo, setPopupInfo] = useState(null);
+    const [mapView, setMapView] = useState({
+        longitude: -4.2026,
+        latitude: 57.4907,
+        zoom: 6,
+        bearing: 0,
+        pitch: 0
+    });
 
     const formSteps = getFormSteps({ date, setDate, reportType, setReportType, email, setEmail });
 
@@ -126,6 +146,8 @@ export default function ReportPage() {
         setLoadingStep(0);
         setFinished(false);
         setError(null);
+        setHotspotLocations([]);
+        setPopupInfo(null);
         let step = 0;
         const interval = setInterval(() => {
             step++;
@@ -134,11 +156,28 @@ export default function ReportPage() {
             } else {
                 clearInterval(interval);
             }
-        }, 50000);
+        }, 10000);
         try {
             const result = await fetchHotspotSummary();
             setHotspots(result.hotspots || []);
             setSummary(result.summary || '');
+            // Fetch lat/lon for each hotspot
+            if (result.hotspots && result.hotspots.length > 0) {
+                const locs = await Promise.all(result.hotspots.map(async (h) => {
+                    try {
+                        const latlon = await fetchWardLatLon(h.source_location);
+                        return {
+                            ward: h.ward,
+                            council: h.council,
+                            lat: latlon.latitude,
+                            lon: latlon.longitude
+                        };
+                    } catch {
+                        return null;
+                    }
+                }));
+                setHotspotLocations(locs.filter(Boolean));
+            }
         } catch (err) {
             setError('Failed to generate report. Please try again.');
         } finally {
@@ -167,7 +206,7 @@ export default function ReportPage() {
         setLoadingStep(0);
         setFinished(false);
         setSnackbarOpen(false);
-        setDate(new Date(2024, 6));
+        setDate(new Date(2024, 6, 29));
         setReportType('hotspot');
         setEmail('');
     };
@@ -239,12 +278,55 @@ export default function ReportPage() {
                     </Typography>
                     <Divider sx={{ my: 2 }} />
                     <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4 }}>
-                        {/* Map Area (unchanged) */}
-                        <Box sx={{ flex: 1, minHeight: 320, bgcolor: '#f5f5f5', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center' }}>
-                            <MapIcon sx={{ fontSize: 80, color: 'grey.400' }} />
-                            <Typography variant="subtitle1" color="text.secondary" sx={{ ml: 2 }}>
-                                Map of predicted hotspots will appear here.
-                            </Typography>
+                        {/* Map Area (now with MapLibre) */}
+                        <Box sx={{ flex: 1, minHeight: 320, bgcolor: '#f5f5f5', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', height: 350 }}>
+                            <MapGL
+                                mapLib={maplibregl}
+                                {...mapView}
+                                onMove={evt => setMapView(evt.viewState)}
+                                style={{ width: '100%', height: 320, borderRadius: 8 }}
+                                mapStyle="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
+                            >
+                                <NavigationControl position="bottom-right" />
+                                {hotspotLocations.map((loc, idx) => (
+                                    <Marker key={idx} longitude={loc.lon} latitude={loc.lat} anchor="bottom">
+                                        <div
+                                            style={{ cursor: 'pointer' }}
+                                            onClick={e => {
+                                                e.stopPropagation();
+                                                setPopupInfo({ ...loc });
+                                            }}
+                                        >
+                                            <svg height="32" width="32" viewBox="0 0 32 32">
+                                                <circle cx="16" cy="16" r="10" fill="#1976d2" stroke="#fff" strokeWidth="2" />
+                                            </svg>
+                                        </div>
+                                    </Marker>
+                                ))}
+                                {popupInfo && (
+                                    <Popup
+                                        longitude={popupInfo.lon}
+                                        latitude={popupInfo.lat}
+                                        closeButton={true}
+                                        closeOnClick={false}
+                                        onClose={() => setPopupInfo(null)}
+                                        anchor="bottom"
+                                    >
+                                        <div>
+                                            <strong>{popupInfo.ward}</strong><br />
+                                            {popupInfo.council}
+                                        </div>
+                                    </Popup>
+                                )}
+                            </MapGL>
+                            {hotspotLocations.length === 0 && (
+                                <Box sx={{ position: 'absolute', left: 0, top: 0, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
+                                    <MapIcon sx={{ fontSize: 80, color: 'grey.400' }} />
+                                    <Typography variant="subtitle1" color="text.secondary" sx={{ ml: 2 }}>
+                                        Map of predicted hotspots will appear here.
+                                    </Typography>
+                                </Box>
+                            )}
                         </Box>
                         {/* Hotspot List */}
                         <Box sx={{ flex: 1, minHeight: 320, bgcolor: '#e3f2fd', borderRadius: 2, p: 3, boxShadow: 1 }}>

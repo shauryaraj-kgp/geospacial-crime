@@ -85,10 +85,15 @@ const DashBoardComponent = () => {
     useEffect(() => {
         if (!selectedWardCode) return;
         setIsLoading(true);
-        fetchRegionMetadata(selectedWardCode)
-            .then(setRegionMeta)
-            .catch(() => setRegionMeta(null))
-            .finally(() => setIsLoading(false));
+        Promise.all([
+            fetchRegionMetadata(selectedWardCode)
+        ]).then(([metadata]) => {
+            console.log('Fetched metadata for ward:', selectedWardCode, metadata);
+            setRegionMeta(metadata);
+        }).catch(error => {
+            console.error('Error fetching metadata for ward:', selectedWardCode, error);
+            setRegionMeta(null);
+        }).finally(() => setIsLoading(false));
     }, [selectedWardCode]);
 
     useEffect(() => {

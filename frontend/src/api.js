@@ -15,7 +15,7 @@ export async function fetchAllRegions() {
 }
 
 export async function fetchRegionMetadata(ward_code) {
-    const response = await fetch(`${BASE_URL}/location/metadata/${encodeURIComponent(ward_code)}`);
+    const response = await fetch(`${BASE_URL}/ward/metadata/${encodeURIComponent(ward_code)}`);
     if (!response.ok) throw new Error('Failed to fetch region metadata');
     return await response.json();
 }

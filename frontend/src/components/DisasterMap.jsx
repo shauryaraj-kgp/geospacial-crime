@@ -198,52 +198,41 @@ const DisasterMap = () => {
     }, []);
 
     const getColor = (score) => {
-        let r, g, b;
         if (score == null || isNaN(score)) return '#e0e0e0';
-        const values = Object.values(regionalScoreMap).filter(v => typeof v === 'number');
-        if (values.length === 0) return '#e0e0e0';
-        let t;
 
+        // Helper function to get RGB values for gradient
+        const getRGBValues = (t) => {
+            // Ensure t is between 0 and 1
+            t = Math.max(0, Math.min(1, t));
+
+            if (t <= 0) return [0, 255, 0];      // pure green
+            if (t >= 1) return [255, 0, 0];      // pure red
+
+            if (t < 0.5) {
+                // Green to Yellow (0 to 0.5)
+                const normalized = t * 2;
+                return [255 * normalized, 255, 0];
+            } else {
+                // Yellow to Red (0.5 to 1)
+                const normalized = (t - 0.5) * 2;
+                return [255, 255 * (1 - normalized), 0];
+            }
+        };
+
+        let t;
         if (scoreType === 'crimeScore') {
-            if (score <= 30) {
-                r = 0; g = 204; b = 51;
-                return `rgb(${r},${g},${b})`;
-            } else if (score >= 70) {
-                r = 255; g = 0; b = 51;
-                return `rgb(${r},${g},${b})`;
-            } else {
-                t = (score - 30) / 40;
-            }
+            // Crime: 0 (green) to 20+ (red)
+            t = Math.min(score / 20, 1);
         } else {
-            // sentimentScore: -2 (red) to -0.5 (green)
-            if (score >= -0.5) {
-                r = 0; g = 204; b = 51;
-                return `rgb(${r},${g},${b})`;
-            } else if (score <= -2) {
-                r = 255; g = 0; b = 51;
-                return `rgb(${r},${g},${b})`;
-            } else {
-                t = (score + 2) / 1.5;
-            }
+            // Sentiment: >-0.5 (green) to <-1.5 (red)
+            if (score > -0.5) return `rgb(0,255,0)`;  // pure green
+            if (score < -1.5) return `rgb(255,0,0)`;  // pure red
+            // Convert -0.5 to -1.5 range to 0 to 1 scale for gradient
+            t = (Math.abs(score) - 0.5) / 1;  // 1 is the range (-1.5 - (-0.5))
         }
-        // Four-color gradient: green (0) -> yellow (0.33) -> orange (0.66) -> red (1)
-        if (t <= 0.33) {
-            const localT = t / 0.33;
-            r = Math.round(0 + (255 - 0) * localT);
-            g = 204;
-            b = 51;
-        } else if (t <= 0.66) {
-            const localT = (t - 0.33) / 0.33;
-            r = 255;
-            g = Math.round(204 - (204 - 153) * localT);
-            b = 51;
-        } else {
-            const localT = (t - 0.66) / 0.34;
-            r = 255;
-            g = Math.round(153 - 153 * localT);
-            b = 51;
-        }
-        return `rgb(${r},${g},${b})`;
+
+        const [r, g, b] = getRGBValues(t);
+        return `rgb(${Math.round(r)},${Math.round(g)},${Math.round(b)})`;
     };
 
     const regionalScoreMap = useMemo(() => {
@@ -338,6 +327,9 @@ const DisasterMap = () => {
     const handleScoreTypeChange = (event, newScoreType) => {
         if (newScoreType !== null) {
             setScoreType(newScoreType);
+            if (newScoreType === 'crimeScore') {
+                setTabIndex(0);
+            }
         }
     };
 
