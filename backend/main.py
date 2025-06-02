@@ -211,6 +211,16 @@ def get_crime_reasons(year: int, month: int, ward_code: str):
     non_zero_crimes = crime_sums[crime_sums > 0].sort_values(ascending=False).to_dict()
     return non_zero_crimes
 
+@app.get("/wards")
+def get_wards():
+    crime_df = load_crime_data()
+    unique_wards = crime_df[['WARD CODE', 'source_location']].drop_duplicates()
+    result = [
+        {"ward_code": row['WARD CODE'], "source_location": row['source_location']} 
+        for _, row in unique_wards.iterrows()
+    ]
+    return result
+
 # @app.get("/data")
 # def get_data():
 #     """Serve the original JSON data file (for download or inspection)."""
