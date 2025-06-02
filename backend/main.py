@@ -45,7 +45,7 @@ def get_crime_by_location(year: int, month: int) -> Dict[str, float]:
         (crime_df['month'] == month)
     ]
     crime_by_location = filtered_df.groupby('source_location')['DETECTED CRIME'].sum().to_dict()
-    return crime_by_location
+    return {"data": crime_by_location}
 
 @app.get("/crime/{year}/{month}/{source_location}")
 def get_crime_total(year: int, month: int, source_location: str) -> Dict[str, float]:
@@ -75,7 +75,7 @@ def get_weekly_crime(year: int, month: int, source_location: str) -> List[Dict]:
         }, 
         axis=1
     ).tolist()
-    return weekly_data
+    return {"data": weekly_data}
 
 @app.get("/crime/{year}/{source_location}")
 def get_yearly_crime(year: int, source_location: str) -> Dict[int, float]:
@@ -85,7 +85,7 @@ def get_yearly_crime(year: int, source_location: str) -> Dict[int, float]:
         (crime_df['source_location'] == source_location)
     ]
     monthly_crime = filtered_df.groupby('month')['DETECTED CRIME'].sum().to_dict()
-    return monthly_crime
+    return {"data": monthly_crime}
 
 @app.get("/sentiment/{year}/{month}")
 def get_sentiment_by_location(year: int, month: int) -> Dict[str, float]:
@@ -95,7 +95,7 @@ def get_sentiment_by_location(year: int, month: int) -> Dict[str, float]:
         (crime_df['month'] == month)
     ]
     sentiment_by_location = filtered_df.groupby('source_location')['weighted_sentiment'].mean().to_dict()
-    return sentiment_by_location
+    return {"data": sentiment_by_location}
 
 @app.get("/sentiment/{year}/{month}/{source_location}")
 def get_sentiment_total(year: int, month: int, source_location: str) -> Dict[str, float]:
@@ -125,7 +125,7 @@ def get_weekly_sentiment(year: int, month: int, source_location: str) -> List[Di
         }, 
         axis=1
     ).tolist()
-    return weekly_data
+    return {"data": weekly_data}
 
 @app.get("/sentiment/{year}/{source_location}")
 def get_yearly_sentiment(year: int, source_location: str) -> Dict[int, float]:
@@ -135,7 +135,7 @@ def get_yearly_sentiment(year: int, source_location: str) -> Dict[int, float]:
         (crime_df['source_location'] == source_location)
     ]
     monthly_sentiment = filtered_df.groupby('month')['weighted_sentiment'].mean().to_dict()
-    return monthly_sentiment
+    return {"data": monthly_sentiment}
 
 @app.get("/rank/crime/{year}/{month}/{source_location}")
 def get_location_crime_rank(year: int, month: int, source_location: str) -> Dict[str, object]:
@@ -146,8 +146,11 @@ def get_location_crime_rank(year: int, month: int, source_location: str) -> Dict
     ]
     location_totals = filtered_df.groupby('source_location')['DETECTED CRIME'].sum().sort_values(ascending=False)
     total_locations = len(location_totals)
-    location_rank = location_totals.index.get_loc(source_location) + 1
-    return location_rank
+    if source_location in location_totals.index:
+        location_rank = location_totals.index.get_loc(source_location) + 1
+    else:
+        location_rank = None
+    return {"rank": location_rank, "total_regions": total_locations}
 
 @app.get("/rank/sentiment/{year}/{month}/{source_location}")
 def get_location_sentiment_rank(year: int, month: int, source_location: str) -> Dict[str, object]:
@@ -158,8 +161,11 @@ def get_location_sentiment_rank(year: int, month: int, source_location: str) -> 
     ]
     location_sentiments = filtered_df.groupby('source_location')['weighted_sentiment'].mean().sort_values(ascending=False)
     total_locations = len(location_sentiments)
-    location_rank = location_sentiments.index.get_loc(source_location) + 1
-    return location_rank
+    if source_location in location_sentiments.index:
+        location_rank = location_sentiments.index.get_loc(source_location) + 1
+    else:
+        location_rank = None
+    return {"rank": location_rank, "total_regions": total_locations}
 
 @app.get("/location/metadata/{source_location}")
 def get_location_metadata(source_location: str) -> Dict[str, object]:
