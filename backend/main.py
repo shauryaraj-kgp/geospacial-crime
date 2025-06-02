@@ -20,20 +20,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-# Global in-memory cache for the Parquet data
+# Global in-memory cache for the CSV data
 crime_df_cache = None
 
 def load_crime_data() -> pd.DataFrame:
-    """Load the crime data from Parquet file, using a global in-memory cache."""
+    """Load the crime data from CSV file, using a global in-memory cache."""
     global crime_df_cache
     if crime_df_cache is not None:
         return crime_df_cache
-    crime_df_cache = pd.read_parquet('new_monthly_data.parquet')
+    crime_df_cache = pd.read_csv('full_dataset.csv')
     return crime_df_cache
 
 @app.get("/explain-hotspot/")
 def explain_hotspot():
-    df_imputed, crime_columns, current_week = get_default_inputs()
+    crime_df = load_crime_data()
+    df_imputed, crime_columns, current_week = get_default_inputs(crime_df)
     result = train_and_explain_hotspot(df_imputed, crime_columns, current_week)
     return JSONResponse(result)
 

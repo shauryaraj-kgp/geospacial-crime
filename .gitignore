@@ -18,6 +18,10 @@ coverage/
 venv/
 __pycache__/
 
+#analysis files
+analysis.ipynb
+df_imputed_preprocessed.csv
+
 # OS / Editor junk
 Thumbs.db
 ehthumbs.db
