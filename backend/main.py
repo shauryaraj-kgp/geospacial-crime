@@ -1,4 +1,4 @@
-from fastapi import FastAPI
+from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse, FileResponse
 from hotspot_explainer_agent import train_and_explain_hotspot, get_default_inputs
@@ -170,11 +170,14 @@ def get_location_sentiment_rank(year: int, month: int, source_location: str):
 @app.get("/location/metadata/{source_location}")
 def get_location_metadata(source_location: str):
     crime_df = load_crime_data()
-    location_data = crime_df[crime_df['source_location'] == source_location].iloc[0]
+    filtered = crime_df[crime_df['source_location'] == source_location]
+    if filtered.empty:
+        raise HTTPException(status_code=404, detail=f"Location '{source_location}' not found")
+    location_data = filtered.iloc[0]
     return {
-        "population": location_data['Population_Census_2022-03-20'],
-        "area": location_data['Area'],
-        "council": location_data['COUNCIL NAME']
+        "population": int(location_data['Population_Census_2022-03-20']),
+        "area": float(location_data['Area']),
+        "council": str(location_data['COUNCIL NAME'])
     }
 
 @app.get("/crime-reasons/{year}/{month}/{source_location}")
