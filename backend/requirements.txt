@@ -8,3 +8,4 @@ google-generativeai
 dotenv
 python-dotenv 
 python-multipart
+fastparquet
