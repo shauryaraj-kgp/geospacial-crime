@@ -365,18 +365,19 @@ const DisasterMap = () => {
     };
 
     return (
-        <>
+        <div className='disaster-map-container'>
             <Box sx={{ height: 'calc(100vh - 32px)', display: 'flex', flexDirection: 'column', padding: '20px' }}>
                 <header className="map-header">
                     <h1>
                         Scotland Crime & Sentiment Heatmap
                     </h1>
                     <p>
-                        Explore crime rates and public sentiment across Scotland's wards. Use the search bar or click on the map to select an area. Switch between Crime Score and Sentiment Score to see different heatmaps. The color scale runs from green (low crime/least negative sentiment) through yellow and orange to red (high crime/most negative sentiment). Top 5 areas are highlighted on the right. Zoom in for more detail and click on a region for statistics and trends.
+                        Explore crime rates and public sentiment across Scotland's wards. The color scale runs from green (low crime/least negative sentiment) through yellow and orange to red (high crime/most negative sentiment). Zoom in for more detail and click on a region for statistics and trends.
                     </p>
                 </header>
-                <Box sx={{ display: 'flex', flex: 1, gap: 2, px: 2 }}>
-                    <Box sx={{ flex: 0.7, position: 'relative' }}>
+
+                <Box sx={{ display: 'flex', flex: 1, gap: 2, px: 2, minHeight: 0 }}>
+                    <Box sx={{ flex: 0.7, position: 'relative', display: 'flex', flexDirection: 'column' }}>
                         <Box
                             component="form"
                             sx={{ display: 'flex', gap: 2, width: '100%', alignItems: 'center', mb: 2 }}
@@ -412,7 +413,11 @@ const DisasterMap = () => {
                                 <IconButton size="small"><ShareIcon /></IconButton>
                             </Stack>
                         </Box>
-                        <Box sx={{ position: 'relative', width: '100%', height: 'calc(100vh - 100px)' }}>
+                        <Box sx={{
+                            position: 'relative',
+                            flex: 1,
+                            minHeight: 0
+                        }}>
                             {geoLoading && (
                                 <Box sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', bgcolor: 'rgba(255,255,255,0.7)', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                                     <CircularProgress color="primary" />
@@ -424,7 +429,7 @@ const DisasterMap = () => {
                                 mapLib={maplibregl}
                                 {...viewState}
                                 onMove={evt => setViewState(evt.viewState)}
-                                style={{ width: '100%', height: '100%' }}
+                                style={{ width: '100%', height: '100%', position: 'absolute' }}
                                 mapStyle="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
                                 interactiveLayerIds={['scotland-regions-layer']}
                                 onClick={onClick}
@@ -460,102 +465,114 @@ const DisasterMap = () => {
                             </MapGL>
                         </Box>
                     </Box>
-                    <Box sx={{ flex: 0.3 }}>
-                        <Card sx={{ height: '100%', overflow: 'auto' }}>
-                            <CardContent>
+                    <Box sx={{ flex: 0.3, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+                        <Card sx={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+                            <CardContent sx={{
+                                flex: 1,
+                                display: 'flex',
+                                flexDirection: 'column',
+                                minHeight: 0,
+                                overflow: 'hidden'
+                            }}>
                                 <Tabs value={tabIndex} onChange={(_, v) => setTabIndex(v)} variant="fullWidth" sx={{ mb: 2 }}>
                                     <Tab label="Top Areas" />
                                     <Tab label="Area Details" />
                                 </Tabs>
-                                {tabIndex === 0 && (
-                                    <>
-                                        <Box sx={{ mb: 2 }}>
+                                <Box sx={{
+                                    flex: 1,
+                                    overflowY: 'auto',
+                                    minHeight: 0
+                                }}>
+                                    {tabIndex === 0 && (
+                                        <>
+                                            <Box sx={{ mb: 2 }}>
+                                                <Typography variant="subtitle2" gutterBottom>
+                                                    Select Month and Year
+                                                </Typography>
+                                                <LocalizationProvider dateAdapter={AdapterDateFns}>
+                                                    <DatePicker
+                                                        views={['year', 'month']}
+                                                        value={selectedDate}
+                                                        onChange={handleDateChange}
+                                                        shouldDisableDate={(date) => !isDateInRange(date)}
+                                                        minDate={new Date(2019, 3)}
+                                                        maxDate={new Date(2024, 11)}
+                                                        slotProps={{
+                                                            textField: {
+                                                                fullWidth: true,
+                                                                size: "small"
+                                                            }
+                                                        }}
+                                                    />
+                                                </LocalizationProvider>
+                                            </Box>
+                                            <Divider sx={{ my: 2 }} />
                                             <Typography variant="subtitle2" gutterBottom>
-                                                Select Month and Year
+                                                Top 5 Areas - {scoreType === 'crimeScore' ? 'Highest Crime Rate' : 'Most Negative Sentiment'}
                                             </Typography>
-                                            <LocalizationProvider dateAdapter={AdapterDateFns}>
-                                                <DatePicker
-                                                    views={['year', 'month']}
-                                                    value={selectedDate}
-                                                    onChange={handleDateChange}
-                                                    shouldDisableDate={(date) => !isDateInRange(date)}
-                                                    minDate={new Date(2019, 3)}
-                                                    maxDate={new Date(2024, 11)}
-                                                    slotProps={{
-                                                        textField: {
-                                                            fullWidth: true,
-                                                            size: "small"
-                                                        }
-                                                    }}
-                                                />
-                                            </LocalizationProvider>
-                                        </Box>
-                                        <Divider sx={{ my: 2 }} />
-                                        <Typography variant="subtitle2" gutterBottom>
-                                            Top 5 Areas - {scoreType === 'crimeScore' ? 'Highest Crime Rate' : 'Most Negative Sentiment'}
-                                        </Typography>
-                                        <List dense>
-                                            {topAreas.map((area, index) => (
-                                                <ListItem
-                                                    key={area.name}
-                                                    button={true}
-                                                    onClick={() => {
-                                                        handleSelectLocation(area.name);
-                                                        setTabIndex(1);
-                                                    }}
-                                                    sx={{ backgroundColor: index === 0 ? 'rgba(255, 0, 0, 0.1)' : 'transparent', borderRadius: 1, mb: 0.5, cursor: 'pointer' }}
-                                                >
-                                                    <ListItemText
-                                                        primary={`${index + 1}. ${getSourceLocation(area.name)}`}
-                                                        secondary={`${scoreType === 'crimeScore' ? 'Crime Rate' : 'Negative Ratio'}: ${area.score.toFixed(2)}`}
-                                                    />
-                                                    {index === 0 && (
-                                                        <Box component="span" sx={{ ml: 1 }}>
-                                                            {scoreType === 'crimeScore' ? <WarningIcon color="error" /> : scoreType === 'sentimentScore' ? <AngryIcon sx={{ color: 'red' }} /> : <MoodIcon sx={{ color: 'orange' }} />}
-                                                        </Box>
-                                                    )}
-                                                </ListItem>
-                                            ))}
-                                        </List>
-                                    </>
-                                )}
-                                {tabIndex === 1 && selectedWardCode && (
-                                    <>
-                                        <Typography variant="h6" gutterBottom>
-                                            {getSourceLocation(selectedWardCode)} - {selectedMonth}/{selectedYear}
-                                        </Typography>
-                                        <Typography variant="subtitle2" gutterBottom>
-                                            Top Crimes
-                                        </Typography>
-                                        <List dense>
-                                            {wardCrimeReasons.length > 0 ? wardCrimeReasons.slice(0, 5).map(([crime, value], idx) => (
-                                                <ListItem key={crime}>
-                                                    <ListItemText
-                                                        primary={`${idx + 1}. ${crime}`}
-                                                        secondary={`Incidents: ${value}`}
-                                                    />
-                                                </ListItem>
-                                            )) : (
-                                                <ListItem>
-                                                    <ListItemText primary="No crimes reported" />
-                                                </ListItem>
-                                            )}
-                                        </List>
-                                        <Divider sx={{ my: 2 }} />
-                                        <Typography variant="subtitle2" gutterBottom>
-                                            Total Detected Crime
-                                        </Typography>
-                                        <Typography variant="h5" color="error" gutterBottom>
-                                            {wardCrimeTotal !== null ? wardCrimeTotal : 'N/A'}
-                                        </Typography>
-                                    </>
-                                )}
+                                            <List dense>
+                                                {topAreas.map((area, index) => (
+                                                    <ListItem
+                                                        key={area.name}
+                                                        button={true}
+                                                        onClick={() => {
+                                                            handleSelectLocation(area.name);
+                                                            setTabIndex(1);
+                                                        }}
+                                                        sx={{ backgroundColor: index === 0 ? 'rgba(255, 0, 0, 0.1)' : 'transparent', borderRadius: 1, mb: 0.5, cursor: 'pointer' }}
+                                                    >
+                                                        <ListItemText
+                                                            primary={`${index + 1}. ${getSourceLocation(area.name)}`}
+                                                            secondary={`${scoreType === 'crimeScore' ? 'Crime Rate' : 'Negative Ratio'}: ${area.score.toFixed(2)}`}
+                                                        />
+                                                        {index === 0 && (
+                                                            <Box component="span" sx={{ ml: 1 }}>
+                                                                {scoreType === 'crimeScore' ? <WarningIcon color="error" /> : scoreType === 'sentimentScore' ? <AngryIcon sx={{ color: 'red' }} /> : <MoodIcon sx={{ color: 'orange' }} />}
+                                                            </Box>
+                                                        )}
+                                                    </ListItem>
+                                                ))}
+                                            </List>
+                                        </>
+                                    )}
+                                    {tabIndex === 1 && selectedWardCode && (
+                                        <>
+                                            <Typography variant="h6" gutterBottom>
+                                                {getSourceLocation(selectedWardCode)} - {selectedMonth}/{selectedYear}
+                                            </Typography>
+                                            <Typography variant="subtitle2" gutterBottom>
+                                                Top Crimes
+                                            </Typography>
+                                            <List dense>
+                                                {wardCrimeReasons.length > 0 ? wardCrimeReasons.slice(0, 5).map(([crime, value], idx) => (
+                                                    <ListItem key={crime}>
+                                                        <ListItemText
+                                                            primary={`${idx + 1}. ${crime}`}
+                                                            secondary={`Incidents: ${value}`}
+                                                        />
+                                                    </ListItem>
+                                                )) : (
+                                                    <ListItem>
+                                                        <ListItemText primary="No crimes reported" />
+                                                    </ListItem>
+                                                )}
+                                            </List>
+                                            <Divider sx={{ my: 2 }} />
+                                            <Typography variant="subtitle2" gutterBottom>
+                                                Total Detected Crime
+                                            </Typography>
+                                            <Typography variant="h5" color="error" gutterBottom>
+                                                {wardCrimeTotal !== null ? wardCrimeTotal : 'N/A'}
+                                            </Typography>
+                                        </>
+                                    )}
+                                </Box>
                             </CardContent>
                         </Card>
                     </Box>
                 </Box>
             </Box>
-        </>
+        </div>
     );
 };
 
