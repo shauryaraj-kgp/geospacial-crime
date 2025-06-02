@@ -44,27 +44,27 @@ def get_crime_by_location(year: int, month: int):
         (crime_df['year'] == year) & 
         (crime_df['month'] == month)
     ]
-    crime_by_location = filtered_df.groupby('source_location')['DETECTED CRIME'].sum().to_dict()
+    crime_by_location = filtered_df.groupby('WARD CODE')['DETECTED CRIME'].sum().to_dict()
     return {"data": crime_by_location}
 
-@app.get("/crime/{year}/{month}/{source_location}")
-def get_crime_total(year: int, month: int, source_location: str):
+@app.get("/crime/{year}/{month}/{ward_code}")
+def get_crime_total(year: int, month: int, ward_code: str):
     crime_df = load_crime_data()
     filtered_df = crime_df[
         (crime_df['year'] == year) & 
         (crime_df['month'] == month) & 
-        (crime_df['source_location'] == source_location)
+        (crime_df['WARD CODE'] == ward_code)
     ]
     total_crime = filtered_df['DETECTED CRIME'].sum()
     return {"total_detected_crime": total_crime}
 
-@app.get("/crime/{year}/{month}/{source_location}/weekly")
-def get_weekly_crime(year: int, month: int, source_location: str):
+@app.get("/crime/{year}/{month}/{ward_code}/weekly")
+def get_weekly_crime(year: int, month: int, ward_code: str):
     crime_df = load_crime_data()
     filtered_df = crime_df[
         (crime_df['year'] == year) & 
         (crime_df['month'] == month) & 
-        (crime_df['source_location'] == source_location)
+        (crime_df['WARD CODE'] == ward_code)
     ]
     filtered_df = filtered_df.sort_values('week_start')
     weekly_data = filtered_df.apply(
@@ -77,12 +77,12 @@ def get_weekly_crime(year: int, month: int, source_location: str):
     ).tolist()
     return {"data": weekly_data}
 
-@app.get("/crime-location/{year}/{source_location}")
-def get_crime_location_yearly(year: int, source_location: str):
+@app.get("/crime-location/{year}/{ward_code}")
+def get_crime_location_yearly(year: int, ward_code: str):
     crime_df = load_crime_data()
     filtered_df = crime_df[
         (crime_df['year'] == year) & 
-        (crime_df['source_location'] == source_location)
+        (crime_df['WARD CODE'] == ward_code)
     ]
     monthly_crime = filtered_df.groupby('month')['DETECTED CRIME'].sum().to_dict()
     return {"data": monthly_crime}
@@ -94,27 +94,27 @@ def get_sentiment_by_location(year: int, month: int):
         (crime_df['year'] == year) & 
         (crime_df['month'] == month)
     ]
-    sentiment_by_location = filtered_df.groupby('source_location')['weighted_sentiment'].mean().to_dict()
+    sentiment_by_location = filtered_df.groupby('WARD CODE')['weighted_sentiment'].mean().to_dict()
     return {"data": sentiment_by_location}
 
-@app.get("/sentiment/{year}/{month}/{source_location}")
-def get_sentiment_total(year: int, month: int, source_location: str):
+@app.get("/sentiment/{year}/{month}/{ward_code}")
+def get_sentiment_total(year: int, month: int, ward_code: str):
     crime_df = load_crime_data()
     filtered_df = crime_df[
         (crime_df['year'] == year) & 
         (crime_df['month'] == month) & 
-        (crime_df['source_location'] == source_location)
+        (crime_df['WARD CODE'] == ward_code)
     ]
     avg_sentiment = filtered_df['weighted_sentiment'].mean()
     return {"average_sentiment": avg_sentiment}
 
-@app.get("/sentiment/{year}/{month}/{source_location}/weekly")
-def get_weekly_sentiment(year: int, month: int, source_location: str):
+@app.get("/sentiment/{year}/{month}/{ward_code}/weekly")
+def get_weekly_sentiment(year: int, month: int, ward_code: str):
     crime_df = load_crime_data()
     filtered_df = crime_df[
         (crime_df['year'] == year) & 
         (crime_df['month'] == month) & 
-        (crime_df['source_location'] == source_location)
+        (crime_df['WARD CODE'] == ward_code)
     ]
     filtered_df = filtered_df.sort_values('week_start')
     weekly_data = filtered_df.apply(
@@ -127,52 +127,52 @@ def get_weekly_sentiment(year: int, month: int, source_location: str):
     ).tolist()
     return {"data": weekly_data}
 
-@app.get("/sentiment-location/{year}/{source_location}")
-def get_sentiment_location_yearly(year: int, source_location: str):
+@app.get("/sentiment-location/{year}/{ward_code}")
+def get_sentiment_location_yearly(year: int, ward_code: str):
     crime_df = load_crime_data()
     filtered_df = crime_df[
         (crime_df['year'] == year) & 
-        (crime_df['source_location'] == source_location)
+        (crime_df['WARD CODE'] == ward_code)
     ]
     monthly_sentiment = filtered_df.groupby('month')['weighted_sentiment'].mean().to_dict()
     return {"data": monthly_sentiment}
 
-@app.get("/rank/crime/{year}/{month}/{source_location}")
-def get_location_crime_rank(year: int, month: int, source_location: str):
+@app.get("/rank/crime/{year}/{month}/{ward_code}")
+def get_location_crime_rank(year: int, month: int, ward_code: str):
     crime_df = load_crime_data()
     filtered_df = crime_df[
         (crime_df['year'] == year) & 
         (crime_df['month'] == month)
     ]
-    location_totals = filtered_df.groupby('source_location')['DETECTED CRIME'].sum().sort_values(ascending=False)
+    location_totals = filtered_df.groupby('WARD CODE')['DETECTED CRIME'].sum().sort_values(ascending=False)
     total_locations = len(location_totals)
-    if source_location in location_totals.index:
-        location_rank = location_totals.index.get_loc(source_location) + 1
+    if ward_code in location_totals.index:
+        location_rank = location_totals.index.get_loc(ward_code) + 1
     else:
         location_rank = None
     return {"rank": location_rank, "total_regions": total_locations}
 
-@app.get("/rank/sentiment/{year}/{month}/{source_location}")
-def get_location_sentiment_rank(year: int, month: int, source_location: str):
+@app.get("/rank/sentiment/{year}/{month}/{ward_code}")
+def get_location_sentiment_rank(year: int, month: int, ward_code: str):
     crime_df = load_crime_data()
     filtered_df = crime_df[
         (crime_df['year'] == year) & 
         (crime_df['month'] == month)
     ]
-    location_sentiments = filtered_df.groupby('source_location')['weighted_sentiment'].mean().sort_values(ascending=False)
+    location_sentiments = filtered_df.groupby('WARD CODE')['weighted_sentiment'].mean().sort_values(ascending=False)
     total_locations = len(location_sentiments)
-    if source_location in location_sentiments.index:
-        location_rank = location_sentiments.index.get_loc(source_location) + 1
+    if ward_code in location_sentiments.index:
+        location_rank = location_sentiments.index.get_loc(ward_code) + 1
     else:
         location_rank = None
     return {"rank": location_rank, "total_regions": total_locations}
 
-@app.get("/location/metadata/{source_location}")
-def get_location_metadata(source_location: str):
+@app.get("/ward/metadata/{ward_code}")
+def get_location_metadata(ward_code: str):
     crime_df = load_crime_data()
-    filtered = crime_df[crime_df['source_location'] == source_location]
+    filtered = crime_df[crime_df['WARD CODE'] == ward_code]
     if filtered.empty:
-        raise HTTPException(status_code=404, detail=f"Location '{source_location}' not found")
+        raise HTTPException(status_code=404, detail=f"Location '{ward_code}' not found")
     location_data = filtered.iloc[0]
     return {
         "population": int(location_data['Population_Census_2022-03-20']),
@@ -180,8 +180,8 @@ def get_location_metadata(source_location: str):
         "council": str(location_data['COUNCIL NAME'])
     }
 
-@app.get("/crime-reasons/{year}/{month}/{source_location}")
-def get_crime_reasons(year: int, month: int, source_location: str):
+@app.get("/crime-reasons/{year}/{month}/{ward_code}")
+def get_crime_reasons(year: int, month: int, ward_code: str):
     crime_columns = [
         'Alcohol offences, travelling to and from sporting event',
         'Breach of football banning order', 
@@ -205,7 +205,7 @@ def get_crime_reasons(year: int, month: int, source_location: str):
     filtered_df = crime_df[
         (crime_df['year'] == year) & 
         (crime_df['month'] == month) & 
-        (crime_df['source_location'] == source_location)
+        (crime_df['WARD CODE'] == ward_code)
     ]
     crime_sums = filtered_df[crime_columns].sum()
     non_zero_crimes = crime_sums[crime_sums > 0].sort_values(ascending=False).to_dict()
