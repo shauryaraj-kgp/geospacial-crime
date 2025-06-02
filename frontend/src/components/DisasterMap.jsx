@@ -366,21 +366,45 @@ const DisasterMap = () => {
 
     return (
         <div className='disaster-map-container'>
-            <Box sx={{ height: 'calc(100vh - 32px)', display: 'flex', flexDirection: 'column', padding: '20px' }}>
+            <Box sx={{
+                height: '100vh',
+                display: 'flex',
+                flexDirection: 'column',
+                overflow: 'hidden'  // This is crucial
+            }}>
                 <header className="map-header">
-                    <h1>
-                        Scotland Crime & Sentiment Heatmap
-                    </h1>
+                    <h1>Scotland Crime & Sentiment Heatmap</h1>
                     <p>
                         Explore crime rates and public sentiment across Scotland's wards. The color scale runs from green (low crime/least negative sentiment) through yellow and orange to red (high crime/most negative sentiment). Zoom in for more detail and click on a region for statistics and trends.
                     </p>
                 </header>
 
-                <Box sx={{ display: 'flex', flex: 1, gap: 2, px: 2, minHeight: 0 }}>
-                    <Box sx={{ flex: 0.7, position: 'relative', display: 'flex', flexDirection: 'column' }}>
+                <Box sx={{
+                    display: 'flex',
+                    flex: 1,
+                    gap: 2,
+                    px: 2,
+                    minHeight: 0,  // Critical for flex child
+                    position: 'relative',
+                    overflow: 'hidden'  // Contain the map
+                }}>
+                    <Box sx={{
+                        flex: 0.7,
+                        position: 'relative',
+                        minHeight: 0,  // Critical for flex child
+                        display: 'flex',
+                        flexDirection: 'column'
+                    }}>
                         <Box
                             component="form"
-                            sx={{ display: 'flex', gap: 2, width: '100%', alignItems: 'center', mb: 2 }}
+                            sx={{
+                                display: 'flex',
+                                gap: 2,
+                                width: '100%',
+                                alignItems: 'center',
+                                mb: 2,
+                                flexShrink: 0  // Prevent form from shrinking
+                            }}
                             onSubmit={(e) => e.preventDefault()}
                         >
                             <Autocomplete
@@ -416,10 +440,29 @@ const DisasterMap = () => {
                         <Box sx={{
                             position: 'relative',
                             flex: 1,
-                            minHeight: 0
+                            minHeight: 0,  // Critical for flex child
+                            '& .maplibregl-map': {
+                                position: 'absolute',
+                                top: 0,
+                                left: 0,
+                                right: 0,
+                                bottom: 0
+                            }
                         }}>
                             {geoLoading && (
-                                <Box sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', bgcolor: 'rgba(255,255,255,0.7)', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
+                                <Box sx={{
+                                    position: 'absolute',
+                                    top: 0,
+                                    left: 0,
+                                    width: '100%',
+                                    height: '100%',
+                                    bgcolor: 'rgba(255,255,255,0.7)',
+                                    zIndex: 10,
+                                    display: 'flex',
+                                    flexDirection: 'column',
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}>
                                     <CircularProgress color="primary" />
                                     <Typography variant="subtitle1" sx={{ mt: 2, color: 'text.secondary' }}>Loading...</Typography>
                                 </Box>
@@ -429,7 +472,7 @@ const DisasterMap = () => {
                                 mapLib={maplibregl}
                                 {...viewState}
                                 onMove={evt => setViewState(evt.viewState)}
-                                style={{ width: '100%', height: '100%', position: 'absolute' }}
+                                style={{ position: 'absolute', top: 0, left: 0, right: 0, bottom: 0 }}
                                 mapStyle="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
                                 interactiveLayerIds={['scotland-regions-layer']}
                                 onClick={onClick}
@@ -465,23 +508,40 @@ const DisasterMap = () => {
                             </MapGL>
                         </Box>
                     </Box>
-                    <Box sx={{ flex: 0.3, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
-                        <Card sx={{ flex: 1, display: 'flex', flexDirection: 'column', minHeight: 0 }}>
+
+                    <Box sx={{
+                        flex: 0.3,
+                        minHeight: 0,  // Critical for flex child
+                        display: 'flex'
+                    }}>
+                        <Card sx={{
+                            flex: 1,
+                            display: 'flex',
+                            flexDirection: 'column',
+                            overflow: 'hidden'  // Contain the content
+                        }}>
                             <CardContent sx={{
                                 flex: 1,
+                                p: 2,
+                                '&:last-child': { pb: 2 },
                                 display: 'flex',
                                 flexDirection: 'column',
-                                minHeight: 0,
-                                overflow: 'hidden'
+                                minHeight: 0  // Critical for flex child
                             }}>
-                                <Tabs value={tabIndex} onChange={(_, v) => setTabIndex(v)} variant="fullWidth" sx={{ mb: 2 }}>
+                                <Tabs
+                                    value={tabIndex}
+                                    onChange={(_, v) => setTabIndex(v)}
+                                    variant="fullWidth"
+                                    sx={{ mb: 2, flexShrink: 0 }}  // Prevent tabs from shrinking
+                                >
                                     <Tab label="Top Areas" />
                                     <Tab label="Area Details" />
                                 </Tabs>
+
                                 <Box sx={{
                                     flex: 1,
                                     overflowY: 'auto',
-                                    minHeight: 0
+                                    minHeight: 0  // Critical for flex child
                                 }}>
                                     {tabIndex === 0 && (
                                         <>
