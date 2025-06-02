@@ -221,6 +221,18 @@ def get_wards():
     ]
     return result
 
+@app.get("/ward/latlon/{ward_code}")
+def get_ward_latlon(ward_code: str):
+    crime_df = load_crime_data()
+    filtered = crime_df[crime_df['WARD CODE'] == ward_code]
+    if filtered.empty:
+        raise HTTPException(status_code=404, detail=f"Ward code '{ward_code}' not found")
+    location_data = filtered.iloc[0]
+    return {
+        "latitude": float(location_data['latitude']),
+        "longitude": float(location_data['longitude'])
+    }
+
 # @app.get("/data")
 # def get_data():
 #     """Serve the original JSON data file (for download or inspection)."""
