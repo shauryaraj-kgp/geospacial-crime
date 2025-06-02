@@ -38,7 +38,7 @@ def explain_hotspot():
     return JSONResponse(result)
 
 @app.get("/crime/{year}/{month}")
-def get_crime_by_location(year: int, month: int) -> Dict[str, float]:
+def get_crime_by_location(year: int, month: int):
     crime_df = load_crime_data()
     filtered_df = crime_df[
         (crime_df['year'] == year) & 
@@ -48,7 +48,7 @@ def get_crime_by_location(year: int, month: int) -> Dict[str, float]:
     return {"data": crime_by_location}
 
 @app.get("/crime/{year}/{month}/{source_location}")
-def get_crime_total(year: int, month: int, source_location: str) -> Dict[str, float]:
+def get_crime_total(year: int, month: int, source_location: str):
     crime_df = load_crime_data()
     filtered_df = crime_df[
         (crime_df['year'] == year) & 
@@ -59,7 +59,7 @@ def get_crime_total(year: int, month: int, source_location: str) -> Dict[str, fl
     return {"total_detected_crime": total_crime}
 
 @app.get("/crime/{year}/{month}/{source_location}/weekly")
-def get_weekly_crime(year: int, month: int, source_location: str) -> List[Dict]:
+def get_weekly_crime(year: int, month: int, source_location: str):
     crime_df = load_crime_data()
     filtered_df = crime_df[
         (crime_df['year'] == year) & 
@@ -78,7 +78,7 @@ def get_weekly_crime(year: int, month: int, source_location: str) -> List[Dict]:
     return {"data": weekly_data}
 
 @app.get("/crime/{year}/{source_location}")
-def get_yearly_crime(year: int, source_location: str) -> Dict[int, float]:
+def get_yearly_crime(year: int, source_location: str):
     crime_df = load_crime_data()
     filtered_df = crime_df[
         (crime_df['year'] == year) & 
@@ -88,7 +88,7 @@ def get_yearly_crime(year: int, source_location: str) -> Dict[int, float]:
     return {"data": monthly_crime}
 
 @app.get("/sentiment/{year}/{month}")
-def get_sentiment_by_location(year: int, month: int) -> Dict[str, float]:
+def get_sentiment_by_location(year: int, month: int):
     crime_df = load_crime_data()
     filtered_df = crime_df[
         (crime_df['year'] == year) & 
@@ -98,7 +98,7 @@ def get_sentiment_by_location(year: int, month: int) -> Dict[str, float]:
     return {"data": sentiment_by_location}
 
 @app.get("/sentiment/{year}/{month}/{source_location}")
-def get_sentiment_total(year: int, month: int, source_location: str) -> Dict[str, float]:
+def get_sentiment_total(year: int, month: int, source_location: str):
     crime_df = load_crime_data()
     filtered_df = crime_df[
         (crime_df['year'] == year) & 
@@ -109,7 +109,7 @@ def get_sentiment_total(year: int, month: int, source_location: str) -> Dict[str
     return {"average_sentiment": avg_sentiment}
 
 @app.get("/sentiment/{year}/{month}/{source_location}/weekly")
-def get_weekly_sentiment(year: int, month: int, source_location: str) -> List[Dict]:
+def get_weekly_sentiment(year: int, month: int, source_location: str):
     crime_df = load_crime_data()
     filtered_df = crime_df[
         (crime_df['year'] == year) & 
@@ -128,7 +128,7 @@ def get_weekly_sentiment(year: int, month: int, source_location: str) -> List[Di
     return {"data": weekly_data}
 
 @app.get("/sentiment/{year}/{source_location}")
-def get_yearly_sentiment(year: int, source_location: str) -> Dict[int, float]:
+def get_yearly_sentiment(year: int, source_location: str):
     crime_df = load_crime_data()
     filtered_df = crime_df[
         (crime_df['year'] == year) & 
@@ -138,7 +138,7 @@ def get_yearly_sentiment(year: int, source_location: str) -> Dict[int, float]:
     return {"data": monthly_sentiment}
 
 @app.get("/rank/crime/{year}/{month}/{source_location}")
-def get_location_crime_rank(year: int, month: int, source_location: str) -> Dict[str, object]:
+def get_location_crime_rank(year: int, month: int, source_location: str):
     crime_df = load_crime_data()
     filtered_df = crime_df[
         (crime_df['year'] == year) & 
@@ -153,7 +153,7 @@ def get_location_crime_rank(year: int, month: int, source_location: str) -> Dict
     return {"rank": location_rank, "total_regions": total_locations}
 
 @app.get("/rank/sentiment/{year}/{month}/{source_location}")
-def get_location_sentiment_rank(year: int, month: int, source_location: str) -> Dict[str, object]:
+def get_location_sentiment_rank(year: int, month: int, source_location: str):
     crime_df = load_crime_data()
     filtered_df = crime_df[
         (crime_df['year'] == year) & 
@@ -168,7 +168,7 @@ def get_location_sentiment_rank(year: int, month: int, source_location: str) -> 
     return {"rank": location_rank, "total_regions": total_locations}
 
 @app.get("/location/metadata/{source_location}")
-def get_location_metadata(source_location: str) -> Dict[str, object]:
+def get_location_metadata(source_location: str):
     crime_df = load_crime_data()
     location_data = crime_df[crime_df['source_location'] == source_location].iloc[0]
     return {
@@ -178,7 +178,7 @@ def get_location_metadata(source_location: str) -> Dict[str, object]:
     }
 
 @app.get("/crime-reasons/{year}/{month}/{source_location}")
-def get_crime_reasons(year: int, month: int, source_location: str) -> Dict[str, float]:
+def get_crime_reasons(year: int, month: int, source_location: str):
     crime_columns = [
         'Alcohol offences, travelling to and from sporting event',
         'Breach of football banning order', 
