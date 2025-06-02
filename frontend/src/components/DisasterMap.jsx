@@ -366,7 +366,7 @@ const DisasterMap = () => {
 
     return (
         <>
-            <Box sx={{ minHeight: 'calc(100vh - 32px)', display: 'flex', flexDirection: 'column', padding: '20px' }}>
+            <Box sx={{ height: 'calc(100vh - 32px)', display: 'flex', flexDirection: 'column', padding: '20px' }}>
                 <header className="map-header">
                     <h1>
                         Scotland Crime & Sentiment Heatmap
@@ -412,7 +412,7 @@ const DisasterMap = () => {
                                 <IconButton size="small"><ShareIcon /></IconButton>
                             </Stack>
                         </Box>
-                        <Box sx={{ position: 'relative', width: '100%', height: 'calc(100% - 52px)' }}>
+                        <Box sx={{ position: 'relative', width: '100%', height: 'calc(100vh - 100px)' }}>
                             {geoLoading && (
                                 <Box sx={{ position: 'absolute', top: 0, left: 0, width: '100%', height: '100%', bgcolor: 'rgba(255,255,255,0.7)', zIndex: 10, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center' }}>
                                     <CircularProgress color="primary" />
