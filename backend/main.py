@@ -31,6 +31,10 @@ def load_crime_data() -> pd.DataFrame:
     crime_df_cache = pd.read_csv('full_dataset.csv')
     return crime_df_cache
 
+@app.get("/")
+def is_it_running_nigga():
+    return {"message": "It's running nigga"}
+
 @app.get("/explain-hotspot/")
 def explain_hotspot():
     crime_df = load_crime_data()

@@ -22,7 +22,7 @@ def train_and_explain_hotspot(df_imputed: pd.DataFrame, crime_columns: list, cur
     predict_df = df[df["week_start"] == current_week]
 
     drop_cols = ['normalized_crime_delta', 'week_start', 'weighted_sentiment', 
-                 'WARD CODE', 'source_location', 'hotspot', 'COUNCIL NAME', 'week_end'] + crime_columns
+                 'WARD CODE', 'source_location', 'hotspot', 'COUNCIL NAME', 'week_end', 'latitude', 'longitude', 'Population_Census_2022-03-20', 'Area'] + crime_columns
     feature_cols = train_df.select_dtypes(include=['number']).columns.difference(drop_cols).tolist()
 
     X_train = train_df[feature_cols]
