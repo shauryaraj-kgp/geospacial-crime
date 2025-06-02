@@ -77,8 +77,8 @@ def get_weekly_crime(year: int, month: int, source_location: str):
     ).tolist()
     return {"data": weekly_data}
 
-@app.get("/crime/{year}/{source_location}")
-def get_yearly_crime(year: int, source_location: str):
+@app.get("/crime-location/{year}/{source_location}")
+def get_crime_location_yearly(year: int, source_location: str):
     crime_df = load_crime_data()
     filtered_df = crime_df[
         (crime_df['year'] == year) & 
@@ -127,8 +127,8 @@ def get_weekly_sentiment(year: int, month: int, source_location: str):
     ).tolist()
     return {"data": weekly_data}
 
-@app.get("/sentiment/{year}/{source_location}")
-def get_yearly_sentiment(year: int, source_location: str):
+@app.get("/sentiment-location/{year}/{source_location}")
+def get_sentiment_location_yearly(year: int, source_location: str):
     crime_df = load_crime_data()
     filtered_df = crime_df[
         (crime_df['year'] == year) & 
