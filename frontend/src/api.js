@@ -1,6 +1,16 @@
 const BASE_URL = 'https://geospacial-crime-backend.onrender.com';
 // const BASE_URL = 'http://127.0.0.1:8000';
 
+export async function pingBackend() {
+    try {
+        const response = await fetch(`${BASE_URL}/`);
+        return response.ok;
+    } catch (error) {
+        console.warn('Failed to ping backend:', error);
+        return false;
+    }
+}
+
 export async function fetchHotspotSummary() {
     const response = await fetch(`${BASE_URL}/explain-hotspot/`);
     if (!response.ok) throw new Error('Failed to fetch hotspot summary');
