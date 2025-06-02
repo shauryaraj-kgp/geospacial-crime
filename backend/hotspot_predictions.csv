@@ -1,6 +1,6 @@
-week_start,week_end,PSOS_MMW_Name,COUNCIL NAME,WARD CODE,true,pred
+week_start,week_end,source_location,COUNCIL NAME,WARD CODE,true,pred
 2024-04-29,2024-05-05,Clydebank Central,West Dunbartonshire,S13002818,0,0
-2024-04-29,2024-05-05,"Broxburn, Uphall and Winchburgh",West Lothian,S13002821,0,1
+2024-04-29,2024-05-05,"Broxburn, Uphall and Winchburgh",West Lothian,S13002821,0,0
 2024-04-29,2024-05-05,Midlothian South,Midlothian,S13002695,0,0
 2024-04-29,2024-05-05,Inverurie and District,Aberdeenshire,S13002499,1,1
 2024-04-29,2024-05-05,East Centre,Glasgow City,S13002658,0,0
@@ -11,7 +11,7 @@ week_start,week_end,PSOS_MMW_Name,COUNCIL NAME,WARD CODE,true,pred
 2024-04-29,2024-05-05,Cambuslang West,South Lanarkshire,S13002799,1,0
 2024-04-29,2024-05-05,Kilsyth,North Lanarkshire,S13002712,0,0
 2024-04-29,2024-05-05,Coldside,Dundee City,S13002548,0,0
-2024-04-29,2024-05-05,Dingwall and Seaforth,Highland,S13002670,0,1
+2024-04-29,2024-05-05,Dingwall and Seaforth,Highland,S13002670,0,0
 2024-04-29,2024-05-05,Pentland Hills,City of Edinburgh,S13002584,0,0
 2024-04-29,2024-05-05,Forfar & District,Angus,S13002510,1,0
 2024-04-29,2024-05-05,West End,Dundee City,S13002547,0,0
@@ -42,7 +42,7 @@ week_start,week_end,PSOS_MMW_Name,COUNCIL NAME,WARD CODE,true,pred
 2024-04-29,2024-05-05,Drumchapel/Anniesland,Glasgow City,S13002654,0,0
 2024-04-29,2024-05-05,The Ferry,Dundee City,S13002552,0,0
 2024-04-29,2024-05-05,North East - Tayside,Dundee City,S13002830,0,0
-2024-04-29,2024-05-05,Inverclyde Central,Inverclyde,S13003013,0,0
+2024-04-29,2024-05-05,Inverclyde Central,Inverclyde,S13003013,0,1
 2024-04-29,2024-05-05,Midlothian East,Midlothian,S13002694,0,0
 2024-04-29,2024-05-05,Inverness West,Highland,S13002675,0,0
 2024-04-29,2024-05-05,Strathtay,Perth and Kinross,S13002742,0,0
@@ -54,7 +54,7 @@ week_start,week_end,PSOS_MMW_Name,COUNCIL NAME,WARD CODE,true,pred
 2024-04-29,2024-05-05,Portobello/Craigmillar,City of Edinburgh,S13002599,0,0
 2024-04-29,2024-05-05,Blantyre,South Lanarkshire,S13002801,0,0
 2024-04-29,2024-05-05,Baillieston,Glasgow City,S13002660,0,0
-2024-04-29,2024-05-05,East Berwickshire,Scottish Borders,S13002767,0,1
+2024-04-29,2024-05-05,East Berwickshire,Scottish Borders,S13002767,0,0
 2024-04-29,2024-05-05,Hawick and Denholm,Scottish Borders,S13002770,0,0
 2024-04-29,2024-05-05,"Buckhaven, Methil and Wemyss Villages",Fife,S13002640,0,0
 2024-04-29,2024-05-05,Upper Braes,Falkirk,S13002617,0,0
@@ -194,7 +194,7 @@ week_start,week_end,PSOS_MMW_Name,COUNCIL NAME,WARD CODE,true,pred
 2024-04-29,2024-05-05,Dalry and West Kilbride,North Ayrshire,S13002709,0,0
 2024-04-29,2024-05-05,Forth and Endrick,Stirling,S13002808,1,0
 2024-04-29,2024-05-05,Montrose & District,Angus,S13002874,0,0
-2024-04-29,2024-05-05,Kilmarnock South,East Ayrshire,S13002557,0,0
+2024-04-29,2024-05-05,Kilmarnock South,East Ayrshire,S13002557,0,1
 2024-04-29,2024-05-05,Cowal,Argyll and Bute,S13002521,0,0
 2024-04-29,2024-05-05,Carnoustie & District,Angus,S13002871,0,0
 2024-04-29,2024-05-05,Troon,South Ayrshire,S13003087,0,0
@@ -220,7 +220,7 @@ week_start,week_end,PSOS_MMW_Name,COUNCIL NAME,WARD CODE,true,pred
 2024-04-29,2024-05-05,Stirling West,Stirling,S13002811,0,0
 2024-04-29,2024-05-05,Helensburgh and Lomond South,West Dunbartonshire,S13002526,1,0
 2024-04-29,2024-05-05,Inverclyde South,Inverclyde,S13002687,1,0
-2024-04-29,2024-05-05,Bearsden South,East Dunbartonshire,S13002564,0,1
+2024-04-29,2024-05-05,Bearsden South,East Dunbartonshire,S13002564,0,0
 2024-04-29,2024-05-05,Cumnock and New Cumnock,East Ayrshire,S13002560,1,0
 2024-04-29,2024-05-05,Kintyre and the Islands,Argyll and Bute,S13002517,0,0
 2024-04-29,2024-05-05,Culloden and Ardersier,Highland,S13002679,0,1
@@ -251,7 +251,7 @@ week_start,week_end,PSOS_MMW_Name,COUNCIL NAME,WARD CODE,true,pred
 2024-04-29,2024-05-05,Anderston/City/Yorkhill,Glasgow City,S13002976,0,0
 2024-04-29,2024-05-05,Keith and Cullen,Moray,S13002697,0,0
 2024-04-29,2024-05-05,Morningside,City of Edinburgh,S13002928,0,1
-2024-04-29,2024-05-05,"Huntly, Strathbogie and Howe of Alford",Aberdeenshire,S13002502,1,1
+2024-04-29,2024-05-05,"Huntly, Strathbogie and Howe of Alford",Aberdeenshire,S13002502,1,0
 2024-04-29,2024-05-05,Inverness South,Highland,S13002681,0,0
 2024-04-29,2024-05-05,Paisley South East,Renfrewshire,S13003080,1,0
 2024-04-29,2024-05-05,Livingston North,West Lothian,S13002822,1,0
@@ -259,7 +259,7 @@ week_start,week_end,PSOS_MMW_Name,COUNCIL NAME,WARD CODE,true,pred
 2024-04-29,2024-05-05,North West Dumfries,Dumfries and Galloway,S13002538,0,0
 2024-04-29,2024-05-05,Helensburgh Central,Argyll and Bute,S13002525,0,0
 2024-04-29,2024-05-05,Fountainbridge/Craiglockhart,City of Edinburgh,S13002591,0,0
-2024-04-29,2024-05-05,Lerwick South,Shetland Islands,S13002778,1,0
+2024-04-29,2024-05-05,Lerwick South,Shetland Islands,S13002778,1,1
 2024-04-29,2024-05-05,Steornabhagh a Tuath,Western Isles - Eilean Siar,S13002606,1,0
 2024-04-29,2024-05-05,Langside,Glasgow City,S13002647,0,0
 2024-04-29,2024-05-05,Stirling North,Stirling,S13003118,0,0
@@ -269,7 +269,7 @@ week_start,week_end,PSOS_MMW_Name,COUNCIL NAME,WARD CODE,true,pred
 2024-04-29,2024-05-05,Bellshill,North Lanarkshire,S13002725,0,0
 2024-04-29,2024-05-05,Helensburgh and Lomond South,Argyll and Bute,S13002526,0,0
 2024-04-29,2024-05-05,Eilean a Cheo,Highland,S13002999,0,0
-2024-04-29,2024-05-05,Inverclyde West,Inverclyde,S13002688,0,0
+2024-04-29,2024-05-05,Inverclyde West,Inverclyde,S13002688,0,1
 2024-04-29,2024-05-05,Ayr East,South Ayrshire,S13002782,0,0
 2024-04-29,2024-05-05,Newlands/Auldburn,Glasgow City,S13002642,0,0
 2024-04-29,2024-05-05,Strathmartine,Dundee City,S13002545,1,1
@@ -315,7 +315,7 @@ week_start,week_end,PSOS_MMW_Name,COUNCIL NAME,WARD CODE,true,pred
 2024-04-29,2024-05-05,"Stepps, Chryston and Muirhead",North Lanarkshire,S13003046,0,0
 2024-04-29,2024-05-05,Howe of Fife and Tay Coast,Fife,S13002634,0,0
 2024-04-29,2024-05-05,Newton Mearns North and Neilston,East Renfrewshire,S13002915,0,0
-2024-04-29,2024-05-05,Westhill and District,Aberdeenshire,S13002501,0,1
+2024-04-29,2024-05-05,Westhill and District,Aberdeenshire,S13002501,0,0
 2024-04-29,2024-05-05,Leaderdale and Melrose,Scottish Borders,S13002765,0,0
 2024-04-29,2024-05-05,Falkirk North,Falkirk,S13002614,0,0
 2024-04-29,2024-05-05,Renfrew North and Braehead,Renfrewshire,S13003075,0,0
@@ -349,7 +349,7 @@ week_start,week_end,PSOS_MMW_Name,COUNCIL NAME,WARD CODE,true,pred
 2024-04-29,2024-05-05,Denny and Banknock,Falkirk,S13002611,0,0
 2024-04-29,2024-05-05,Inverclyde North,Inverclyde,S13002686,0,0
 2024-04-29,2024-05-05,Aird and Loch Ness,Highland,S13002674,0,0
-2024-04-29,2024-05-05,Caol and Mallaig,Highland,S13002673,0,1
+2024-04-29,2024-05-05,Caol and Mallaig,Highland,S13002673,0,0
 2024-04-29,2024-05-05,Cumbernauld East,North Lanarkshire,S13003045,0,0
 2024-04-29,2024-05-05,East End,Dundee City,S13002551,0,0
 2024-04-29,2024-05-05,Garscadden/Scotstounhill,Glasgow City,S13002653,0,0

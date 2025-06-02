@@ -9,3 +9,4 @@ dotenv
 python-dotenv 
 python-multipart
 fastparquet
+pymongo[srv]

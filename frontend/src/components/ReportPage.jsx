@@ -134,7 +134,7 @@ export default function ReportPage() {
             } else {
                 clearInterval(interval);
             }
-        }, 3000);
+        }, 50000);
         try {
             const result = await fetchHotspotSummary();
             setHotspots(result.hotspots || []);
