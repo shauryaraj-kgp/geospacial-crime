@@ -7,17 +7,20 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 import os
 import pickle
+from hotspot_utils import get_default_inputs
 
 # Load your .env with API key
 load_dotenv()
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
 
-# --- Load pre-trained model and feature columns ---
-MODEL_PATH = os.path.join(os.path.dirname(__file__), "hotspot_xgb.pkl")
-with open(MODEL_PATH, "rb") as f:
-    model_bundle = pickle.load(f)
-    loaded_model = model_bundle["model"]
-    loaded_feature_cols = model_bundle["feature_cols"]
+# --- Load XGBoost model and feature columns in native format ---
+MODEL_PATH = os.path.join(os.path.dirname(__file__), "hotspot_xgb.json")
+FEATURE_COLS_PATH = os.path.join(os.path.dirname(__file__), "feature_cols.pkl")
+
+loaded_model = XGBClassifier()
+loaded_model.load_model(MODEL_PATH)
+with open(FEATURE_COLS_PATH, "rb") as f:
+    loaded_feature_cols = pickle.load(f)
 
 def train_and_explain_hotspot(df_imputed: pd.DataFrame, crime_columns: list, current_week: str):
     # --- PREPARE DATA ---
@@ -75,30 +78,6 @@ def summarize_with_gemini(X_pred, y_pred, shap_values, predict_df):
     model = genai.GenerativeModel("gemini-2.0-flash")  
     response = model.generate_content(batched_prompt)
     return response.text, hotspots
-
-def get_default_inputs(df_imputed):
-    crime_columns = [
-        'Alcohol offences, travelling to and from sporting event',
-        'Breach of football banning order',
-        'Breach of the peace',
-        'Carrying of Knives etc S Act 1993',
-        'Drunk in or attempting to enter designated sports ground',
-        'Mobbing and rioting',
-        'Offensive behaviour at football (OBaFaTBSA 2012)',
-        'Permitting riotous behaviour in licensed premises',
-        'Possession of an offensive weapon',
-        'Possession of offensive weapon used in other criminal activity',
-        'Public mischief - including wasting police time',
-        'Racially aggravated conduct',
-        'Racially aggravated harassment',
-        'Serious Assault',
-        'Sports grounds offences possessing alcohol etc',
-        'Stirring up hatred: Racial',
-        'Threatening or abusive behaviour',
-        'DETECTED CRIME'
-    ]
-    current_week = "2024-04-29"
-    return df_imputed, crime_columns, current_week
 
 # --- Example Usage ---
 # if __name__ == "__main__":

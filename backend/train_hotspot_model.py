@@ -1,7 +1,7 @@
 import pandas as pd
 import pickle
 from xgboost import XGBClassifier
-from hotspot_explainer_agent import get_default_inputs
+from hotspot_utils import get_default_inputs
 import os
 from dotenv import load_dotenv
 from pymongo import MongoClient
@@ -43,12 +43,12 @@ def main():
     print(f"Training on {X_train.shape[0]} samples and {X_train.shape[1]} features...")
     model = XGBClassifier(n_estimators=100, max_depth=6, learning_rate=0.1, random_state=42, n_jobs=-1)
     model.fit(X_train, y_train)
-    with open("hotspot_xgb.pkl", "wb") as f:
-        pickle.dump({
-            "model": model,
-            "feature_cols": feature_cols
-        }, f)
-    print("Model saved to hotspot_xgb.pkl")
+    # Save model in XGBoost native format
+    model.save_model("hotspot_xgb.json")
+    # Pickle only feature_cols
+    with open("feature_cols.pkl", "wb") as f:
+        pickle.dump(feature_cols, f)
+    print("Model saved to hotspot_xgb.json and feature columns to feature_cols.pkl")
 
 if __name__ == "__main__":
     main() 
