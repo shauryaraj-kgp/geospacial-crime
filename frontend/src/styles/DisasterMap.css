@@ -35,3 +35,13 @@
 .sidebar::-webkit-scrollbar-thumb:hover {
     background: #555;
 }
+
+/* Ensure MapLibre controls and popups are above the map canvas */
+.maplibregl-control-container,
+.maplibregl-popup {
+    z-index: 20 !important;
+}
+
+.maplibregl-canvas {
+    z-index: 1 !important;
+}
