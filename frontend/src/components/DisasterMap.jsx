@@ -368,14 +368,14 @@ const DisasterMap = () => {
 
     return (
         <div className='disaster-map-container'>
-            <Box sx={{ height: 'calc(100vh - 32px)', display: 'flex', flexDirection: 'column' }}>
-                <Box sx={{ p: 2 }}>
+            <Box sx={{ height: '800px', display: 'flex', flexDirection: 'column' }}>
+                <Box sx={{ p: 2, height: '100px' }}>
                     <Typography variant="h4" marginBottom={1}>Interactive Disaster Map</Typography>
                     <Typography variant="body1" marginBottom={1}>description.....</Typography>
                 </Box>
 
-                <Box sx={{ display: 'flex', flex: 1, gap: 2, px: 2 }}>
-                    <Box sx={{ flex: 0.7, position: 'relative' }}>
+                <Box sx={{ display: 'flex', flex: 1, gap: 2, px: 2, height: '700px' }}>
+                    <Box sx={{ width: '70%', position: 'relative', height: '700px' }}>
 
                         <Box
                             component="form"
@@ -385,6 +385,7 @@ const DisasterMap = () => {
                                 width: '100%',
                                 alignItems: 'center',
                                 mb: 2,
+                                height: '52px'
                             }}
                             onSubmit={(e) => e.preventDefault()}
                         >
@@ -427,7 +428,7 @@ const DisasterMap = () => {
                             </Stack>
                         </Box>
 
-                        <Box sx={{ position: 'relative', width: '100%', height: 'calc(100% - 52px)' }}>
+                        <Box sx={{ position: 'relative', width: '100%', height: '600px' }}>
 
                             {geoLoading && (
                                 <Box
@@ -515,7 +516,7 @@ const DisasterMap = () => {
                         </Box>
                     </Box>
 
-                    <Box sx={{ flex: 0.3 }}>
+                    <Box sx={{ width: '30%', height: '700px' }}>
                         <Card sx={{ height: '100%', overflow: 'auto' }}>
                             <CardContent>
                                 <Tabs
