@@ -38,13 +38,13 @@
 }
 
 /* Ensure MapLibre controls and popups are above the map canvas */
-.maplibregl-control-container,
-.maplibregl-popup {
+.maplibregl-map .maplibregl-control-container,
+.maplibregl-map .maplibregl-popup {
     position: absolute !important;
-    z-index: 20 !important;
+    z-index: 9999 !important;
     pointer-events: auto !important;
 }
 
-.maplibregl-canvas {
+.maplibregl-map .maplibregl-canvas {
     z-index: 1 !important;
 }
