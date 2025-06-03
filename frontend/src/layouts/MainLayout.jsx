@@ -126,7 +126,6 @@ export default function MainLayout() {
                     flexGrow: 1,
                     backgroundColor: 'rgb(240, 240, 240)',
                     width: { sm: `calc(100% - ${drawerWidth}px)` },
-                    height: '100vh'
                 }}
             >
                 <Outlet />

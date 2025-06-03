@@ -367,8 +367,8 @@ const DisasterMap = () => {
     };
 
     return (
-        <div className='disaster-map-container'>
-            <Box sx={{ height: '800px', display: 'flex', flexDirection: 'column' }}>
+        <div className='disaster-map-container' style={{ height: '900px' }}>
+            <Box sx={{ height: '900px', display: 'flex', flexDirection: 'column' }}>
                 <Box sx={{ p: 2, height: '100px' }}>
                     <Typography variant="h4" marginBottom={1}>Interactive Disaster Map</Typography>
                     <Typography variant="body1" marginBottom={1}>description.....</Typography>

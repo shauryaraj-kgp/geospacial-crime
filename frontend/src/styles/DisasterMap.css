@@ -1,5 +1,6 @@
 .disaster-map-container {
     height: 100%;
+    /* background-color: rgb(240, 240, 240); */
 }
 
 .maplibregl-map {
@@ -39,7 +40,9 @@
 /* Ensure MapLibre controls and popups are above the map canvas */
 .maplibregl-control-container,
 .maplibregl-popup {
+    position: absolute !important;
     z-index: 20 !important;
+    pointer-events: auto !important;
 }
 
 .maplibregl-canvas {
