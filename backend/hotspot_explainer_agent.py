@@ -6,10 +6,18 @@ import shap
 import google.generativeai as genai
 from dotenv import load_dotenv
 import os
+import pickle
 
 # Load your .env with API key
 load_dotenv()
 genai.configure(api_key=os.getenv("GOOGLE_API_KEY"))
+
+# --- Load pre-trained model and feature columns ---
+MODEL_PATH = os.path.join(os.path.dirname(__file__), "hotspot_xgb.pkl")
+with open(MODEL_PATH, "rb") as f:
+    model_bundle = pickle.load(f)
+    loaded_model = model_bundle["model"]
+    loaded_feature_cols = model_bundle["feature_cols"]
 
 def train_and_explain_hotspot(df_imputed: pd.DataFrame, crime_columns: list, current_week: str):
     # --- PREPARE DATA ---
@@ -18,29 +26,19 @@ def train_and_explain_hotspot(df_imputed: pd.DataFrame, crime_columns: list, cur
     df["week_start"] = pd.to_datetime(df["week_start"])
     df = df.sort_values(by="week_start")
 
-    train_df = df[df["week_start"] < current_week]
     predict_df = df[df["week_start"] == current_week]
-
-    drop_cols = ['normalized_crime_delta', 'week_start', 'weighted_sentiment', 
-                 'WARD CODE', 'source_location', 'hotspot', 'COUNCIL NAME', 'week_end', 'latitude', 'longitude', 'Population_Census_2022-03-20', 'Area'] + crime_columns
-    feature_cols = train_df.select_dtypes(include=['number']).columns.difference(drop_cols).tolist()
-
-    X_train = train_df[feature_cols]
-    y_train = train_df["hotspot"]
-    X_pred = predict_df[feature_cols]
+    X_pred = predict_df[loaded_feature_cols]
     y_true = predict_df["hotspot"]
 
-    # --- TRAIN MODEL ---
-    model = XGBClassifier(n_estimators=100, max_depth=6, learning_rate=0.1, random_state=42, n_jobs=-1)
-    model.fit(X_train, y_train)
-    y_pred = model.predict(X_pred)
+    # --- USE LOADED MODEL FOR PREDICTION ---
+    y_pred = loaded_model.predict(X_pred)
 
     result = predict_df[['week_start','week_end','source_location','COUNCIL NAME','WARD CODE']].copy()
     result['true'] = y_true.values
     result['pred'] = y_pred
     result.to_csv("hotspot_predictions.csv", index=False) #output predictions path
     # --- SHAP ANALYSIS ---
-    explainer = shap.Explainer(model, X_train)
+    explainer = shap.Explainer(loaded_model, X_pred)
     shap_values = explainer(X_pred)
 
     summary, hotspots = summarize_with_gemini(X_pred, y_pred, shap_values, predict_df)
