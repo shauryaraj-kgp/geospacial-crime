@@ -5,8 +5,7 @@ xgboost
 scikit-learn
 shap
 google-generativeai
-dotenv
-python-dotenv 
+python-dotenv
 python-multipart
 fastparquet
 pymongo[srv]

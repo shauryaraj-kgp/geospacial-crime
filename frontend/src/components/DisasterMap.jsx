@@ -329,9 +329,7 @@ const DisasterMap = () => {
     const handleScoreTypeChange = (event, newScoreType) => {
         if (newScoreType !== null) {
             setScoreType(newScoreType);
-            if (newScoreType === 'crimeScore') {
-                setTabIndex(0);
-            }
+            setTabIndex(0);
         }
     };
 
@@ -367,14 +365,14 @@ const DisasterMap = () => {
     };
 
     return (
-        <div className='disaster-map-container' style={{ height: '900px' }}>
+        <div className='disaster-map-container' style={{ height: '900px', padding: '30px' }}>
             <Box sx={{ height: '900px', display: 'flex', flexDirection: 'column' }}>
-                <Box sx={{ p: 2, height: '100px' }}>
-                    <Typography variant="h4" marginBottom={1}>Interactive Disaster Map</Typography>
-                    <Typography variant="body1" marginBottom={1}>description.....</Typography>
-                </Box>
+                <header className="map-header">
+                    <h1>Scotland Crime Interactive Map</h1>
+                    <p>Explore crime and sentiment patterns across Scotland. Search areas, filter by date, and toggle between crime and sentiment to visualize hotspots and regional trends.</p>
+                </header>
 
-                <Box sx={{ display: 'flex', flex: 1, gap: 2, px: 2, height: '700px' }}>
+                <Box sx={{ display: 'flex', flex: 1, gap: 2, height: '700px' }}>
                     <Box sx={{ width: '70%', position: 'relative', height: '700px' }}>
 
                         <Box
@@ -417,6 +415,7 @@ const DisasterMap = () => {
                                     size="small"
                                     onClick={() => {
                                         setSelectedWardCode(null);
+                                        setTabIndex(0);
                                         flyToLocation(-4.2026, 57.4907, 5);
                                     }}>
                                     <RefreshIcon />
@@ -428,7 +427,7 @@ const DisasterMap = () => {
                             </Stack>
                         </Box>
 
-                        <Box sx={{ position: 'relative', width: '100%', height: '600px' }}>
+                        <Box sx={{ position: 'relative', width: '100%', height: '630px' }}>
 
                             {geoLoading && (
                                 <Box

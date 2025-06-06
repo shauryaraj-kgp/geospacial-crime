@@ -1,15 +1,26 @@
-import React, { useState } from 'react';
+import React, { useRef, useState, useEffect } from 'react';
 import {
-    Box, Paper, Typography, TextField, Button, Stack, Stepper, Step, StepLabel, CircularProgress, Card, Divider, MenuItem, Snackbar, LinearProgress
+    Box, Paper, Typography, TextField, Button, Stack, IconButton, Stepper, Step, StepLabel, CircularProgress, Card, Divider, MenuItem, Snackbar, LinearProgress,
+    Autocomplete, List, ListItem, ListItemText, CardContent, Tab
 } from '@mui/material';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
-import { Map as MapIcon, Assessment as AssessmentIcon, Email as EmailIcon, Warning as WarningIcon } from '@mui/icons-material';
-import { Map as MapGL, NavigationControl, Popup, Marker } from 'react-map-gl/maplibre';
+import { Map as MapGL, NavigationControl, Popup, Marker, ScaleControl, Source, Layer } from 'react-map-gl/maplibre';
 import * as maplibregl from 'maplibre-gl';
 import 'maplibre-gl/dist/maplibre-gl.css';
 import { fetchHotspotSummary, fetchWardLatLon } from '../api';
+import '../styles/ReportPage.css';
+import {
+    Map as MapIcon, Assessment as AssessmentIcon, Email as EmailIcon,
+    Search as SearchIcon,
+    Refresh as RefreshIcon,
+    MyLocation as MyLocationIcon,
+    Info as InfoIcon,
+    Download as DownloadIcon,
+    Share as ShareIcon,
+    Warning as WarningIcon,
+} from '@mui/icons-material';
 
 const REPORT_TYPES = [
     { value: 'hotspot', label: 'Hotspot Forecast', desc: 'Predicts the most likely crime hotspots for the selected week.' },
@@ -126,19 +137,41 @@ export default function ReportPage() {
     const [error, setError] = useState(null);
     const [hotspotLocations, setHotspotLocations] = useState([]); // [{ward, council, lat, lon}]
     const [popupInfo, setPopupInfo] = useState(null);
-    const [mapView, setMapView] = useState({
+    const [viewState, setViewState] = useState({
         longitude: -4.2026,
         latitude: 57.4907,
         zoom: 6,
         bearing: 0,
         pitch: 0
     });
+    const [geoData, setGeoData] = useState(null);
+    const [selectedLocation, setSelectedLocation] = useState(null);
+    const [selectedWardCode, setSelectedWardCode] = useState(null);
+    const [selectedLatLon, setSelectedLatLon] = useState(null);
+    const mapRef = useRef(null);
 
     const formSteps = getFormSteps({ date, setDate, reportType, setReportType, email, setEmail });
 
     // Progress for form and loading
     const formProgress = Math.round((formStep / formSteps.length) * 100);
     const loadingProgress = Math.round((loadingStep / LOADING_STEPS.length) * 100);
+
+    // Place this after hotspotLocations is defined
+    const hotspotNames = hotspotLocations.map(h => h.location);
+    const layerStyle = {
+        id: 'scotland-regions-layer-2',
+        type: 'fill',
+        paint: {
+            'fill-color': [
+                'match',
+                ['get', 'WD13NM'],
+                ...hotspotNames.reduce((arr, name) => arr.concat([name, '#f44336']), []), // MUI red[500]
+                '#e0e0e0' // MUI grey[300] for non-hotspots
+            ],
+            'fill-opacity': 0.7,
+            'fill-outline-color': '#666666'
+        }
+    };
 
     // Simulate loading steps and call backend
     const startLoading = async () => {
@@ -156,17 +189,20 @@ export default function ReportPage() {
             } else {
                 clearInterval(interval);
             }
-        }, 10000);
+        }, 25000);
+
         try {
             const result = await fetchHotspotSummary();
             setHotspots(result.hotspots || []);
             setSummary(result.summary || '');
+
             // Fetch lat/lon for each hotspot
             if (result.hotspots && result.hotspots.length > 0) {
                 const locs = await Promise.all(result.hotspots.map(async (h) => {
                     try {
-                        const latlon = await fetchWardLatLon(h.source_location);
+                        const latlon = await fetchWardLatLon(h.ward);
                         return {
+                            location: h.source_location,
                             ward: h.ward,
                             council: h.council,
                             lat: latlon.latitude,
@@ -211,8 +247,86 @@ export default function ReportPage() {
         setEmail('');
     };
 
+
+    const handleSelectLocation = async (sourceLocation) => {
+        setSelectedLocation(sourceLocation);
+        const mapping = hotspotLocations.find(m => m.location === sourceLocation);
+        if (mapping) {
+            setSelectedWardCode(mapping.ward);
+            setSelectedLatLon({ latitude: mapping.lat, longitude: mapping.lon });
+            flyToLocation(mapping.lon, mapping.lat, 10);
+            setPopupInfo({
+                longitude: mapping.lon,
+                latitude: mapping.lat,
+                label: sourceLocation,
+                council: mapping.council
+            });
+        } else {
+            setSelectedWardCode(null);
+            setSelectedLatLon(null);
+        }
+    };
+
+    const flyToLocation = (longitude, latitude, zoom) => {
+        const map = mapRef.current?.getMap?.();
+        if (map) {
+            map.flyTo({
+                center: [longitude, latitude],
+                zoom: zoom,
+                speed: 1.2,
+                curve: 1.42,
+                essential: true
+            });
+        } else {
+            setViewState(vs => ({ ...vs, longitude, latitude, zoom }));
+        }
+    };
+
+    // Fetch GeoJSON file once
+    useEffect(() => {
+        fetch('/data/scotland-geodata.json')
+            .then((res) => res.json())
+            .then((data) => {
+                setGeoData(data);
+            })
+            .catch((err) => {
+                console.error('Failed to load geoData:', err);
+            });
+    }, []);
+
+    const handleMapClick = (event) => {
+        if (event.features && event.features.length > 0) {
+            const feature = event.features[0];
+            const properties = feature.properties || {};
+            const regionName = properties.WD13NM;
+            // Try to find council from geoData or hotspotLocations
+            let council = '';
+            const match = hotspotLocations.find(h => h.location === regionName);
+            if (match) council = match.council;
+            setPopupInfo({
+                longitude: event.lngLat.lng,
+                latitude: event.lngLat.lat,
+                label: regionName,
+                council
+            });
+        } else {
+            setPopupInfo(null);
+        }
+    };
+
+    function renderGeminiSummary(summary) {
+        // Split on ** and alternate between normal and bold
+        const parts = summary.split(/(\*\*[^*]+\*\*)/g);
+        return parts.map((part, idx) => {
+            if (part.startsWith('**') && part.endsWith('**')) {
+                return <strong key={idx}>{part.slice(2, -2)}</strong>;
+            }
+            return <span key={idx}>{part}</span>;
+        });
+    }
+
     return (
-        <Box sx={{ p: 4, mx: 'auto' }}>
+        <Box sx={{ p: 4, mx: 'auto', minHeight: '100vh' }}>
             <Paper sx={{ p: 4, mb: 4, boxShadow: 5 }}>
                 <Typography variant="h4" gutterBottom>Generate Hotspot Report</Typography>
                 <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
@@ -271,102 +385,161 @@ export default function ReportPage() {
 
             {/* Final Report Section */}
             {finished && (
-                <Card sx={{ p: 4, mb: 4, boxShadow: 3, mx: 'auto', background: 'rgba(255,255,255,0.97)' }}>
-                    <Typography variant="h5" gutterBottom>
-                        <WarningIcon color="error" sx={{ mr: 1, verticalAlign: 'middle' }} />
-                        Hotspot Forecast for Next Week
-                    </Typography>
-                    <Divider sx={{ my: 2 }} />
-                    <Box sx={{ display: 'flex', flexDirection: { xs: 'column', md: 'row' }, gap: 4 }}>
-                        {/* Map Area (now with MapLibre) */}
-                        <Box sx={{ flex: 1, minHeight: 320, bgcolor: '#f5f5f5', borderRadius: 2, display: 'flex', alignItems: 'center', justifyContent: 'center', position: 'relative', height: 350 }}>
-                            <MapGL
-                                mapLib={maplibregl}
-                                {...mapView}
-                                onMove={evt => setMapView(evt.viewState)}
-                                style={{ width: '100%', height: 320, borderRadius: 8 }}
-                                mapStyle="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
+                <>
+                    <Box sx={{ display: 'flex', flex: 1, gap: 2, height: '700px' }}>
+                        <Box sx={{ width: '70%', position: 'relative', height: '700px' }}>
+
+                            <Box
+                                component="form"
+                                sx={{
+                                    display: 'flex',
+                                    gap: 2,
+                                    width: '100%',
+                                    alignItems: 'center',
+                                    mb: 2,
+                                    height: '52px'
+                                }}
+                                onSubmit={(e) => e.preventDefault()}
                             >
-                                <NavigationControl position="bottom-right" />
-                                {hotspotLocations.map((loc, idx) => (
-                                    <Marker key={idx} longitude={loc.lon} latitude={loc.lat} anchor="bottom">
-                                        <div
-                                            style={{ cursor: 'pointer' }}
-                                            onClick={e => {
-                                                e.stopPropagation();
-                                                setPopupInfo({ ...loc });
+                                <Autocomplete
+                                    fullWidth
+                                    options={hotspotLocations.map(h => h.location)}
+                                    value={selectedLocation}
+                                    onChange={(_, newValue) => handleSelectLocation(newValue)}
+                                    renderInput={(params) => (
+                                        <TextField
+                                            {...params}
+                                            placeholder="Search Hotspot Areas..."
+                                            size="small"
+                                            InputProps={{
+                                                ...params.InputProps,
+                                                startAdornment: (
+                                                    <>
+                                                        <SearchIcon sx={{ mr: 1, color: 'text.secondary' }} />
+                                                        {params.InputProps.startAdornment}
+                                                    </>
+                                                )
                                             }}
+                                        />
+                                    )}
+                                />
+
+                                <Stack direction="row" spacing={1}>
+                                    <IconButton
+                                        size="small"
+                                        onClick={() => {
+                                            setSelectedWardCode(null);
+                                            flyToLocation(-4.2026, 57.4907, 5);
+                                        }}>
+                                        <RefreshIcon />
+                                    </IconButton>
+                                    <IconButton size="small"><MyLocationIcon /></IconButton>
+                                    <IconButton size="small"><InfoIcon /></IconButton>
+                                    <IconButton size="small"><DownloadIcon /></IconButton>
+                                    <IconButton size="small"><ShareIcon /></IconButton>
+                                </Stack>
+                            </Box>
+
+                            <Box sx={{ position: 'relative', width: '100%', height: '500px' }}>
+
+                                <MapGL
+                                    ref={mapRef}
+                                    mapLib={maplibregl}
+                                    {...viewState}
+                                    onMove={evt => setViewState(evt.viewState)}
+                                    style={{ width: '100%', height: '100%' }}
+                                    mapStyle="https://basemaps.cartocdn.com/gl/positron-gl-style/style.json"
+                                    interactiveLayerIds={['scotland-regions-layer-2']}
+                                    cursor={selectedWardCode ? 'pointer' : 'default'}
+                                    onClick={handleMapClick}
+                                >
+
+                                    <NavigationControl position="bottom-right" />
+                                    <ScaleControl position="bottom-left" />
+
+                                    {geoData && (
+                                        <Source type="geojson" data={geoData}>
+                                            <Layer {...layerStyle} />
+                                        </Source>
+                                    )}
+
+                                    {popupInfo && (
+                                        <Popup
+                                            longitude={popupInfo.longitude}
+                                            latitude={popupInfo.latitude}
+                                            closeButton={true}
+                                            closeOnClick={false}
+                                            onClose={() => setPopupInfo(null)}
                                         >
-                                            <svg height="32" width="32" viewBox="0 0 32 32">
-                                                <circle cx="16" cy="16" r="10" fill="#1976d2" stroke="#fff" strokeWidth="2" />
-                                            </svg>
-                                        </div>
-                                    </Marker>
-                                ))}
-                                {popupInfo && (
-                                    <Popup
-                                        longitude={popupInfo.lon}
-                                        latitude={popupInfo.lat}
-                                        closeButton={true}
-                                        closeOnClick={false}
-                                        onClose={() => setPopupInfo(null)}
-                                        anchor="bottom"
-                                    >
-                                        <div>
-                                            <strong>{popupInfo.ward}</strong><br />
-                                            {popupInfo.council}
-                                        </div>
-                                    </Popup>
-                                )}
-                            </MapGL>
-                            {hotspotLocations.length === 0 && (
-                                <Box sx={{ position: 'absolute', left: 0, top: 0, width: '100%', height: '100%', display: 'flex', alignItems: 'center', justifyContent: 'center', pointerEvents: 'none' }}>
-                                    <MapIcon sx={{ fontSize: 80, color: 'grey.400' }} />
-                                    <Typography variant="subtitle1" color="text.secondary" sx={{ ml: 2 }}>
-                                        Map of predicted hotspots will appear here.
+                                            <div>
+                                                <strong>{popupInfo.label}</strong><br />
+                                                <strong>{popupInfo.council}</strong><br />
+                                            </div>
+                                        </Popup>
+                                    )}
+
+                                </MapGL>
+                            </Box>
+                        </Box>
+
+
+                        <Box sx={{ width: '30%', height: '565px' }}>
+                            <Card sx={{ height: '100%', overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
+                                {/* Tan header outside scrollable area */}
+                                <Box sx={{ p: 2, borderTopLeftRadius: 8, borderTopRightRadius: 8 }}>
+                                    <Typography variant="h6" textAlign={'center'} >
+                                        Hotspot Details
                                     </Typography>
                                 </Box>
-                            )}
-                        </Box>
-                        {/* Hotspot List */}
-                        <Box sx={{ flex: 1, minHeight: 320, bgcolor: '#e3f2fd', borderRadius: 2, p: 3, boxShadow: 1 }}>
-                            <Typography variant="h6" gutterBottom color="primary">Predicted Hotspots</Typography>
-                            {hotspots.length === 0 ? (
-                                <Typography color="text.secondary">No hotspots detected this week.</Typography>
-                            ) : (
-                                <Box component="ul" sx={{ pl: 2, m: 0 }}>
-                                    {hotspots.map((h, idx) => (
-                                        <li key={idx} style={{ marginBottom: 8 }}>
-                                            <Typography variant="subtitle1" fontWeight={600} color="primary.dark">
-                                                {h.ward}
-                                            </Typography>
-                                            <Typography variant="body2" color="text.secondary">
-                                                {h.council}
-                                            </Typography>
-                                        </li>
-                                    ))}
-                                </Box>
-                            )}
+                                <Divider sx={{ width: 200, mx: 'auto' }} />
+                                <CardContent sx={{ flex: 1, overflowY: 'auto', p: 0 }}>
+                                    <List dense>
+                                        {hotspotLocations.map((area, index) => (
+                                            <ListItem
+                                                key={area.location}
+                                                button={true}
+                                                onClick={() => {
+                                                    handleSelectLocation(area.location);
+                                                }}
+                                                sx={{
+                                                    backgroundColor: 'transparent',
+                                                    borderRadius: 1,
+                                                    mb: 0.5,
+                                                    cursor: 'pointer'
+                                                }}
+                                            >
+                                                <ListItemText
+                                                    primary={`${index + 1}. ${area.location}`}
+                                                    secondary={`${area.council}`}
+                                                />
+                                            </ListItem>
+                                        ))}
+                                    </List>
+                                </CardContent>
+                            </Card>
                         </Box>
                     </Box>
-                    {/* Gemini Summary Below */}
-                    <Divider sx={{ my: 3 }} />
-                    <Box sx={{ bgcolor: '#fffde7', borderRadius: 2, p: 3, boxShadow: 0, mt: 2 }}>
-                        <Typography variant="h6" gutterBottom color="secondary">Gemini AI Summary</Typography>
-                        <Typography variant="body1" color="text.secondary" sx={{ whiteSpace: 'pre-line' }}>
-                            {summary}
-                        </Typography>
+
+                    <Box sx={{ width: '100%' }}>
+                        <Paper elevation={2} sx={{ p: 4, borderRadius: 2 }}>
+                            <Typography variant="h5" gutterBottom>Gemini AI Summary</Typography>
+                            <Divider sx={{ mb: 2 }} />
+                            <Typography variant="body1" sx={{ whiteSpace: 'pre-line' }}>{renderGeminiSummary(summary)}</Typography>
+                        </Paper>
                     </Box>
+
                     {error && <Typography color="error" sx={{ mt: 2 }}>{error}</Typography>}
                     <Button variant="outlined" sx={{ mt: 3 }} onClick={handleReset}>Generate Another Report</Button>
-                </Card>
-            )}
+                </>
+            )
+            }
+
             <Snackbar
                 open={snackbarOpen}
                 autoHideDuration={4000}
                 onClose={() => setSnackbarOpen(false)}
-                message="Report generated! (placeholder)"
+                message="Report generated!"
             />
-        </Box>
+        </Box >
     );
 }

@@ -29,6 +29,7 @@ def main():
     if df.empty:
         print("No data found in MongoDB.")
         return
+    
     df_imputed, crime_columns, current_week = get_default_inputs(df)
     current_week = pd.to_datetime(current_week)
     df = df_imputed.copy()
@@ -38,17 +39,21 @@ def main():
     drop_cols = ['normalized_crime_delta', 'week_start', 'weighted_sentiment', 
                  'WARD CODE', 'source_location', 'hotspot', 'COUNCIL NAME', 'week_end', 'latitude', 'longitude', 'Population_Census_2022-03-20', 'Area'] + crime_columns
     feature_cols = train_df.select_dtypes(include=['number']).columns.difference(drop_cols).tolist()
+
     X_train = train_df[feature_cols]
     y_train = train_df["hotspot"]
     print(f"Training on {X_train.shape[0]} samples and {X_train.shape[1]} features...")
     model = XGBClassifier(n_estimators=100, max_depth=6, learning_rate=0.1, random_state=42, n_jobs=-1)
     model.fit(X_train, y_train)
-    # Save model in XGBoost native format
-    model.save_model("hotspot_xgb.json")
-    # Pickle only feature_cols
+
+    # Save model and feature columns using pickle
+    with open("hotspot_xgb.pkl", "wb") as f:
+        pickle.dump(model, f)
+
     with open("feature_cols.pkl", "wb") as f:
         pickle.dump(feature_cols, f)
-    print("Model saved to hotspot_xgb.json and feature columns to feature_cols.pkl")
+
+    print("Model saved to hotspot_xgb.pkl and feature columns to feature_cols.pkl")
 
 if __name__ == "__main__":
     main() 
