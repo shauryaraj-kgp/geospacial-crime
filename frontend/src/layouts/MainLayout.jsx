@@ -56,7 +56,7 @@ export default function MainLayout() {
                     </ListItem>
                 </Tooltip>
 
-                <Tooltip title="Pre-Disaster Data" placement="right">
+                <Tooltip title="Reports" placement="right">
                     <ListItem disablePadding>
                         <ListItemButton
                             component="a"
@@ -64,7 +64,7 @@ export default function MainLayout() {
                             sx={{ justifyContent: 'center', py: 2 }}
                         >
                             <ListItemIcon sx={{ minWidth: 0 }}><ReportsIcon /></ListItemIcon>
-                            <ListItemText primary="Pre-Disaster Data" sx={{ display: 'none' }} />
+                            <ListItemText primary="Reports" sx={{ display: 'none' }} />
                         </ListItemButton>
                     </ListItem>
                 </Tooltip>

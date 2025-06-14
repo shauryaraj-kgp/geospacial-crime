@@ -61,7 +61,7 @@
     background: #555;
 }
 
-/* Ensure MapLibre controls and popups are above the map canvas */
+/* Ensure MapLibre controls and popups are above the map canvas
 .maplibregl-map .maplibregl-control-container,
 .maplibregl-map .maplibregl-popup {
     position: absolute !important;
@@ -71,4 +71,4 @@
 
 .maplibregl-map .maplibregl-canvas {
     z-index: 1 !important;
-}
+} */

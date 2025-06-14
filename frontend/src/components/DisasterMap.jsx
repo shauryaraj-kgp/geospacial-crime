@@ -427,8 +427,7 @@ const DisasterMap = () => {
                             </Stack>
                         </Box>
 
-                        <Box sx={{ position: 'relative', width: '100%', height: '630px' }}>
-
+                        <Box sx={{ width: '100%', height: '630px', position: 'relative' }}>
                             {geoLoading && (
                                 <Box
                                     sx={{
@@ -461,7 +460,6 @@ const DisasterMap = () => {
                                 onClick={onClick}
                                 cursor={selectedWardCode ? 'pointer' : 'default'}
                             >
-
                                 <NavigationControl position="bottom-right" />
                                 <ScaleControl position="bottom-left" />
 
@@ -559,7 +557,6 @@ const DisasterMap = () => {
                                             {topAreas.map((area, index) => (
                                                 <ListItem
                                                     key={area.name}
-                                                    button={true}
                                                     onClick={() => {
                                                         handleSelectLocation(area.name);
                                                         setTabIndex(1);

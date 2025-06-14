@@ -189,7 +189,7 @@ export default function ReportPage() {
             } else {
                 clearInterval(interval);
             }
-        }, 25000);
+        }, 30000);
 
         try {
             const result = await fetchHotspotSummary();
@@ -370,7 +370,7 @@ export default function ReportPage() {
             {loading && (
                 <Card sx={{ p: 4, mb: 4, textAlign: 'center', boxShadow: 3, mx: 'auto', background: 'white' }}>
                     <Box sx={{ minHeight: 60, display: 'flex', flexDirection: 'column', alignItems: 'center', justifyContent: 'center', mb: 2 }}>
-                        <Typography variant="h6" sx={{ mb: 1, fontWeight: 500 }}>
+                        <Typography variant="h6" color="text.primary" sx={{ mb: 1, fontWeight: 500 }}>
                             {LOADING_STEPS[loadingStep]}
                         </Typography>
                     </Box>
@@ -440,8 +440,7 @@ export default function ReportPage() {
                                 </Stack>
                             </Box>
 
-                            <Box sx={{ position: 'relative', width: '100%', height: '500px' }}>
-
+                            <Box sx={{ width: '100%', height: '500px', position: 'relative' }}>
                                 <MapGL
                                     ref={mapRef}
                                     mapLib={maplibregl}
@@ -453,7 +452,6 @@ export default function ReportPage() {
                                     cursor={selectedWardCode ? 'pointer' : 'default'}
                                     onClick={handleMapClick}
                                 >
-
                                     <NavigationControl position="bottom-right" />
                                     <ScaleControl position="bottom-left" />
 
@@ -462,7 +460,6 @@ export default function ReportPage() {
                                             <Layer {...layerStyle} />
                                         </Source>
                                     )}
-
                                     {popupInfo && (
                                         <Popup
                                             longitude={popupInfo.longitude}
@@ -477,7 +474,6 @@ export default function ReportPage() {
                                             </div>
                                         </Popup>
                                     )}
-
                                 </MapGL>
                             </Box>
                         </Box>
@@ -487,7 +483,7 @@ export default function ReportPage() {
                             <Card sx={{ height: '100%', overflow: 'auto', display: 'flex', flexDirection: 'column' }}>
                                 {/* Tan header outside scrollable area */}
                                 <Box sx={{ p: 2, borderTopLeftRadius: 8, borderTopRightRadius: 8 }}>
-                                    <Typography variant="h6" textAlign={'center'} >
+                                    <Typography variant="h6" textAlign={'center'} sx={{ margin: 0.5, fontWeight: 500 }} >
                                         Hotspot Details
                                     </Typography>
                                 </Box>
@@ -522,7 +518,7 @@ export default function ReportPage() {
 
                     <Box sx={{ width: '100%' }}>
                         <Paper elevation={2} sx={{ p: 4, borderRadius: 2 }}>
-                            <Typography variant="h5" gutterBottom>Gemini AI Summary</Typography>
+                            <Typography variant="h5" gutterBottom>Summary Report</Typography>
                             <Divider sx={{ mb: 2 }} />
                             <Typography variant="body1" sx={{ whiteSpace: 'pre-line' }}>{renderGeminiSummary(summary)}</Typography>
                         </Paper>
