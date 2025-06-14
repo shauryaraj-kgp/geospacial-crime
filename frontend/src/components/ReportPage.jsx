@@ -8,7 +8,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Map as MapGL, NavigationControl, Popup, Marker, ScaleControl, Source, Layer } from 'react-map-gl/maplibre';
 import * as maplibregl from 'maplibre-gl';
-// import 'maplibre-gl/dist/maplibre-gl.css';
+// import 'maplibre-gl/dist/maplibre-gl.css'; // FUCK YOU NIGGA
 import { fetchHotspotSummary, fetchWardLatLon } from '../api';
 import '../styles/ReportPage.css';
 import {
@@ -140,7 +140,7 @@ export default function ReportPage() {
     const [viewState, setViewState] = useState({
         longitude: -4.2026,
         latitude: 57.4907,
-        zoom: 6,
+        zoom: 5,
         bearing: 0,
         pitch: 0
     });
@@ -327,7 +327,7 @@ export default function ReportPage() {
 
     return (
         <Box sx={{ p: 4, mx: 'auto', minHeight: '100vh' }}>
-            <Paper sx={{ p: 4, mb: 4, boxShadow: 5 }}>
+            <Paper sx={{ p: 4, mb: 6, boxShadow: 5 }}>
                 <Typography variant="h4" gutterBottom>Generate Hotspot Report</Typography>
                 <Typography variant="body1" color="text.secondary" sx={{ mb: 2 }}>
                     Generate a predictive report for crime hotspots across Scotland in the upcoming week. The model will analyze historical data and forecast the most likely areas of concern. Select your preferences below.

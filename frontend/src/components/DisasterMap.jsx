@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect, useMemo } from 'react';
 import * as maplibregl from 'maplibre-gl';
 import { Map as MapGL, NavigationControl, ScaleControl, Popup, Source, Layer } from 'react-map-gl/maplibre';
-// import 'maplibre-gl/dist/maplibre-gl.css';
+// import 'maplibre-gl/dist/maplibre-gl.css'; //FUCK YOU NIGGA
 import '../styles/DisasterMap.css';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
