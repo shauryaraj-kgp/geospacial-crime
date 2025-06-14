@@ -189,7 +189,7 @@ export default function ReportPage() {
             } else {
                 clearInterval(interval);
             }
-        }, 30000);
+        }, 20000);
 
         try {
             const result = await fetchHotspotSummary();

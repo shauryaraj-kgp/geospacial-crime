@@ -8,4 +8,6 @@ google-generativeai
 python-dotenv
 python-multipart
 fastparquet
+joblib
 pymongo[srv]
+motor
