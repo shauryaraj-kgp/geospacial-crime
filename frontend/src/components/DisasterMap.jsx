@@ -1,7 +1,7 @@
 import React, { useRef, useState, useEffect, useMemo } from 'react';
 import * as maplibregl from 'maplibre-gl';
 import { Map as MapGL, NavigationControl, ScaleControl, Popup, Source, Layer } from 'react-map-gl/maplibre';
-import 'maplibre-gl/dist/maplibre-gl.css';
+// import 'maplibre-gl/dist/maplibre-gl.css';
 import '../styles/DisasterMap.css';
 import { AdapterDateFns } from '@mui/x-date-pickers/AdapterDateFns';
 import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
@@ -47,10 +47,6 @@ import {
     fetchWardMappings,
     fetchWardLatLon
 } from '../api';
-
-const metaFields = [
-    'source_location', 'COUNCIL NAME', 'WARD CODE', 'Population_Census_2022-03-20', 'Area', 'longitude', 'latitude', 'year', 'month', 'DETECTED CRIME', 'neg_ratio'
-];
 
 // Utility functions for data calculations
 const DataUtils = {

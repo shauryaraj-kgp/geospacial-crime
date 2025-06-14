@@ -25,7 +25,6 @@ import {
     fetchSentimentTotal,
     fetchCrimeReasons,
     fetchWardMappings,
-    pingBackend
 } from '../api';
 
 const TimeSeriesChartComponent = React.memo(({ data, xAxis, series, height = 220, title }) => (
@@ -156,20 +155,6 @@ const DashBoardComponent = () => {
         });
         setWardCodeMapping(mapping);
     }, [allRegions]);
-
-    // Add ping interval effect
-    useEffect(() => {
-        // Initial ping
-        pingBackend();
-
-        // Set up interval to ping every 14 minutes
-        const pingInterval = setInterval(() => {
-            pingBackend();
-        }, 14 * 60 * 1000); // 14 minutes in milliseconds
-
-        // Cleanup interval on component unmount
-        return () => clearInterval(pingInterval);
-    }, []);
 
     const handleSearchLocation = (query) => {
         if (!allSourceLocations.includes(query)) {

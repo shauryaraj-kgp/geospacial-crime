@@ -8,7 +8,7 @@ import { LocalizationProvider } from '@mui/x-date-pickers/LocalizationProvider';
 import { DatePicker } from '@mui/x-date-pickers/DatePicker';
 import { Map as MapGL, NavigationControl, Popup, Marker, ScaleControl, Source, Layer } from 'react-map-gl/maplibre';
 import * as maplibregl from 'maplibre-gl';
-import 'maplibre-gl/dist/maplibre-gl.css';
+// import 'maplibre-gl/dist/maplibre-gl.css';
 import { fetchHotspotSummary, fetchWardLatLon } from '../api';
 import '../styles/ReportPage.css';
 import {
