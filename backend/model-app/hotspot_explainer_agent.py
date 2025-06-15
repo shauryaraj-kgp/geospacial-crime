@@ -1,6 +1,6 @@
 import pandas as pd
-from xgboost import XGBClassifier
-from sklearn.metrics import accuracy_score, classification_report
+# from xgboost import XGBClassifier
+# from sklearn.metrics import accuracy_score, classification_report
 import shap
 import google.generativeai as genai
 from dotenv import load_dotenv

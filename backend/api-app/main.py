@@ -1,27 +1,34 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
-from fastapi.responses import JSONResponse, FileResponse
-from hotspot_explainer_agent import train_and_explain_hotspot, get_default_inputs
 import os
+import logging
 from dotenv import load_dotenv
 from pymongo import MongoClient
-from bson.objectid import ObjectId
-import pandas as pd
-import json
-from typing import List, Dict
+from pymongo.errors import ConnectionFailure
 
+# Configure logging
+logging.basicConfig(
+    level=logging.INFO,
+    format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+)
+logger = logging.getLogger(__name__)
+
+# Load environment variables
 load_dotenv()
 
+# MongoDB configuration
 MONGO_URI = os.getenv("MONGO_URI")
 DB_NAME = os.getenv("DB_NAME")
 COLLECTION_NAME = os.getenv("COLLECTION_NAME")
 
-client = MongoClient(MONGO_URI)
-db = client[DB_NAME]
-collection = db[COLLECTION_NAME]
+# Initialize FastAPI app
+app = FastAPI(
+    title="Geospatial Crime API",
+    description="API for accessing geospatial crime data",
+    version="1.0.0"
+)
 
-app = FastAPI()
-
+# Add middleware
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -30,25 +37,21 @@ app.add_middleware(
     allow_headers=["*"],
 )
 
-def mongo_to_df(query={}, projection=None):
-    """Helper to get a DataFrame from MongoDB query."""
-    cursor = collection.find(query, projection)
-    df = pd.DataFrame(list(cursor))
-    return df
+# MongoDB connection
+try:
+    client = MongoClient(MONGO_URI)
+    db = client[DB_NAME]
+    collection = db[COLLECTION_NAME]
+    # Test connection
+    client.admin.command('ping')
+    logger.info("Successfully connected to MongoDB")
+except ConnectionFailure as e:
+    logger.error(f"Failed to connect to MongoDB: {e}")
+    raise
 
 @app.get("/")
 def is_it_running():
     return {"message": "It's running"}
-
-@app.get("/explain-hotspot/")
-def explain_hotspot():
-    # Loads all data for model training. If this is too large, consider sampling or aggregating in MongoDB first.
-    df = mongo_to_df()
-    if df.empty:
-        raise HTTPException(status_code=404, detail="No data found in MongoDB.")
-    df_imputed, crime_columns, current_week = get_default_inputs(df)
-    result = train_and_explain_hotspot(df_imputed, crime_columns, current_week)
-    return JSONResponse(result)
 
 @app.get("/crime/{year}/{month}")
 def get_crime_by_location(year: int, month: int):
@@ -238,8 +241,3 @@ def get_ward_latlon(ward_code: str):
         "latitude": float(doc.get('latitude', 0)),
         "longitude": float(doc.get('longitude', 0))
     }
-
-# @app.get("/data")
-# def get_data():
-#     """Serve the original JSON data file (for download or inspection)."""
-#     return FileResponse("new_monthly_data.json", media_type='application/json', filename="new_monthly_data.json")
