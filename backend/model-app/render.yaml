@@ -6,18 +6,12 @@ services:
     startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     plan: free
     envVars:
-      - key: ENV
-        value: PRODUCTION
       - key: MONGO_URI
-        sync: false
-      - key: DB_NAME
-        sync: false
-      - key: COLLECTION_NAME
         sync: false
       - key: GOOGLE_API_KEY
         sync: false
       - key: PORT
-        value: 10000
+        value: 10001
     buildFilter:
       paths:
         - requirements.txt
