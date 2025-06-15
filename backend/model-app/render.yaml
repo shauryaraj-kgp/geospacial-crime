@@ -3,7 +3,7 @@ services:
     name: geospacial-crime-model
     env: python
     buildCommand: pip install -r requirements.txt
-    startCommand: uvicorn main:app --host 0.0.0.0 --port 10000
+    startCommand: uvicorn main:app --host 0.0.0.0 --port $PORT
     plan: free
     envVars:
       - key: ENV
@@ -16,3 +16,12 @@ services:
         sync: false
       - key: GOOGLE_API_KEY
         sync: false
+      - key: PORT
+        value: 10000
+    buildFilter:
+      paths:
+        - requirements.txt
+        - main.py
+        - hotspot_explainer_agent.py
+        - hotspot_utils.py
+        - models/**
