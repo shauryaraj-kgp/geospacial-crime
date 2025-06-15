@@ -20,5 +20,6 @@ services:
       paths:
         - requirements.txt
         - main.py
+        - runtime.txt
     healthCheckPath: /health
     autoDeploy: true
