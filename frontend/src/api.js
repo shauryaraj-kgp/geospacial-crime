@@ -1,5 +1,5 @@
 const API_URL = 'https://api-app-rn9y.onrender.com';
-const MODEL_URL = 'https://model-app-4bsd.onrender.com';
+const MODEL_URL = 'https://geospacial-crime-production.up.railway.app';
 // const API_URL = 'http://127.0.0.1:8000';
 // const MODEL_URL = 'http://127.0.0.1:10000';
 
