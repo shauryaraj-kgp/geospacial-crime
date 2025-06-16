@@ -38,9 +38,12 @@ def is_it_running():
 
 @app.get("/explain-hotspot/")
 def explain_hotspot():
-    df = mongo_to_df()
-    if df.empty:
-        raise HTTPException(status_code=404, detail="No data found in MongoDB.")
-    df_imputed, crime_columns, current_week = get_default_inputs(df)
-    result = train_and_explain_hotspot(df_imputed, crime_columns, current_week)
-    return JSONResponse(result)
+    try:
+        df = mongo_to_df()
+        if df.empty:
+            raise HTTPException(status_code=404, detail="No data found in MongoDB.")
+        df_imputed, crime_columns, current_week = get_default_inputs(df)
+        result = train_and_explain_hotspot(df_imputed, crime_columns, current_week)
+        return JSONResponse(result)
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=str(e))
