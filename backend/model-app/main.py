@@ -1,11 +1,12 @@
 from fastapi import FastAPI, HTTPException
 from fastapi.middleware.cors import CORSMiddleware
 from fastapi.responses import JSONResponse
-from hotspot_explainer_agent import train_and_explain_hotspot, get_default_inputs
+from hotspot_explainer_agent import generate_hotspot
 import os
 from dotenv import load_dotenv
 from pymongo import MongoClient
 import pandas as pd
+from hotspot_utils import get_default_inputs
 
 load_dotenv()
 
@@ -39,11 +40,14 @@ def is_it_running():
 @app.get("/explain-hotspot/")
 def explain_hotspot():
     try:
-        df = mongo_to_df()
+        crime_columns, current_week = get_default_inputs()
+        current_week = pd.to_datetime(current_week)
+        week_query = {"week_start": current_week}
+        df = mongo_to_df(query=week_query)
+
         if df.empty:
-            raise HTTPException(status_code=404, detail="No data found in MongoDB.")
-        df_imputed, crime_columns, current_week = get_default_inputs(df)
-        result = train_and_explain_hotspot(df_imputed, crime_columns, current_week)
+            raise HTTPException(status_code=404, detail="No data found in MongoDB for this week.")
+        result = generate_hotspot(df, crime_columns, current_week)
         return JSONResponse(result)
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))

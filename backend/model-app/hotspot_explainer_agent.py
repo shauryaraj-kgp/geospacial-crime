@@ -6,7 +6,6 @@ import google.generativeai as genai
 from dotenv import load_dotenv
 import os
 import joblib
-from hotspot_utils import get_default_inputs
 
 # Load your .env with API key
 load_dotenv()
@@ -28,24 +27,18 @@ def load_model_once():
         _feature_cols_cache = joblib.load(FEATURE_COLS_PATH)
     return _model_cache, _feature_cols_cache
 
-def train_and_explain_hotspot(df_imputed: pd.DataFrame, crime_columns: list, current_week: str):
+def generate_hotspot(df: pd.DataFrame, crime_columns: list, current_week: str):
     model, feature_cols = load_model_once()
 
-    current_week = pd.to_datetime(current_week)
-    df = df_imputed.copy()
-    df["week_start"] = pd.to_datetime(df["week_start"])
-    df = df.sort_values(by="week_start")
-
-    predict_df = df[df["week_start"] == current_week]
-    if predict_df.empty:
+    if df.empty:
         return {"summary": "No data available for this week.", "hotspots": []}
 
-    X_pred = predict_df[feature_cols]
-    y_true = predict_df["hotspot"]
+    X_pred = df[feature_cols]
+    y_true = df["hotspot"]
 
     y_pred = model.predict(X_pred)
 
-    result = predict_df[['week_start', 'week_end', 'source_location', 'COUNCIL NAME', 'WARD CODE']].copy()
+    result = df[['week_start', 'week_end', 'source_location', 'COUNCIL NAME', 'WARD CODE']].copy()
     result['true'] = y_true.values
     result['pred'] = y_pred
 
@@ -55,7 +48,7 @@ def train_and_explain_hotspot(df_imputed: pd.DataFrame, crime_columns: list, cur
         return {"summary": "No hotspots predicted for this week.", "hotspots": []}
 
     X_hotspots = X_pred.iloc[hotspot_indices]
-    predict_hotspots = predict_df.iloc[hotspot_indices]
+    predict_hotspots = df.iloc[hotspot_indices]
 
     # SHAP explanation (use full background set for now)
     explainer = shap.Explainer(model, X_pred)
@@ -88,7 +81,7 @@ def summarize_with_gemini(X_pred, shap_values, predict_df):
     batched_prompt = (
         "The following wards were predicted to be crime hotspots this week. "
         "Each entry lists the most influential features (via SHAP values) that contributed to the prediction. "
-        "Provide a short summary (in normal paragraph format, not markdown) explaining why each location may be a hotspot based on these features:\n\n" +
+        "Provide a short summary (in normal paragraph format, not markdown) explaining why EACH location may be a hotspot based on these features. Give me details for every location using the SHAP values:\n\n" +
         "\n\n".join(summaries)
     )
 

@@ -1,4 +1,4 @@
-def get_default_inputs(df_imputed):
+def get_default_inputs(current_week=None):
     crime_columns = [
         'Alcohol offences, travelling to and from sporting event',
         'Breach of football banning order',
@@ -19,5 +19,6 @@ def get_default_inputs(df_imputed):
         'Threatening or abusive behaviour',
         'DETECTED CRIME'
     ]
-    current_week = "2024-04-29"
-    return df_imputed, crime_columns, current_week 
+    if current_week is None:
+        current_week = "2024-04-29"
+    return crime_columns, current_week 

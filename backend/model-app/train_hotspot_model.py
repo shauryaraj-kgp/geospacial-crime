@@ -36,8 +36,11 @@ def main():
         return
 
     print("Preprocessing data...")
-    df_imputed, crime_columns, current_week = get_default_inputs(df)
+    crime_columns, current_week = get_default_inputs()
     current_week = pd.to_datetime(current_week)
+
+    # If you have imputation, do it here. For now, just use df as df_imputed.
+    df_imputed = df.copy()
 
     df_imputed["week_start"] = pd.to_datetime(df_imputed["week_start"])
     df_imputed = df_imputed.sort_values(by="week_start")
@@ -65,7 +68,7 @@ def main():
     model.fit(X_train, y_train)
 
     print("Saving model and feature columns...")
-    # model.save_model(MODEL_PATH)  # Save with XGBoost’s own format
+    # model.save_model(MODEL_PATH)  # Save with XGBoost's own format
     joblib.dump(model, MODEL_PATH)
     joblib.dump(feature_cols, FEATURE_COLS_PATH)
 
